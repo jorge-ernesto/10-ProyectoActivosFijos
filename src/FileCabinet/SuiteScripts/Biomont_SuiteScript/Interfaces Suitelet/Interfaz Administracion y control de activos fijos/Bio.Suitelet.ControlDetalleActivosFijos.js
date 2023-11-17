@@ -142,6 +142,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 label: 'Datos del bien',
                 tab: 'custpage_subtab'
             });
+
             // Tipo de activo
             let fieldTipoActivo = form.addField({
                 id: 'custpage_field_tipo_activo',
@@ -284,6 +285,76 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             });
             fieldOtros.updateBreakType({ breakType: 'STARTROW' })
 
+            /****************** Mostrar Grupo de Campos - Baja de activo ******************/
+            form.addFieldGroup({
+                id: 'custpage_group_bajact',
+                label: 'Baja de activo',
+                tab: 'custpage_subtab'
+            });
+
+            // Motivo de baja
+            let fieldMotivoBaja = form.addField({
+                id: 'custpage_field_motivo_baja',
+                label: 'Motivo de baja',
+                type: 'select',
+                container: 'custpage_group_bajact'
+            });
+            fieldMotivoBaja.updateBreakType({ breakType: 'STARTCOL' })
+
+            // Archivo de baja
+            let fieldArchivoBaja = form.addField({
+                id: 'custpage_field_archivo_baja',
+                label: 'Archivo de baja',
+                type: 'text',
+                container: 'custpage_group_bajact'
+            });
+            fieldArchivoBaja.updateBreakType({ breakType: 'STARTCOL' })
+
+            /****************** Mostrar Grupo de Campos - Transferencia de activo ******************/
+            form.addFieldGroup({
+                id: 'custpage_group_traact',
+                label: 'Transferencia de activo',
+                tab: 'custpage_subtab'
+            });
+
+            // Nuevo Centro de Costo (Clase)
+            let fieldNuevaClase = form.addField({
+                id: 'custpage_field_nueva_clase',
+                label: 'Nuevo Centro de Costo (Clase)',
+                type: 'select',
+                source: 'classification',
+                container: 'custpage_group_traact'
+            });
+            fieldNuevaClase.updateBreakType({ breakType: 'STARTCOL' })
+
+            // Nueva Ubicacion
+            let fieldNuevaUbicacion = form.addField({
+                id: 'custpage_field_nueva_ubicacion',
+                label: 'Nueva Ubicación',
+                type: 'text',
+                container: 'custpage_group_traact'
+            });
+            fieldNuevaUbicacion.updateBreakType({ breakType: 'STARTROW' })
+
+            // Usuario Notificado por Transferencia
+            let fieldUsuarioNotificadoTransferencia = form.addField({
+                id: 'custpage_field_usuario_notificado_transferencia',
+                label: 'Usuario Notificado por Transferencia',
+                type: 'select',
+                source: 'employee',
+                container: 'custpage_group_traact'
+            });
+            fieldUsuarioNotificadoTransferencia.updateBreakType({ breakType: 'STARTCOL' })
+
+            // Nuevo Usuario (Depositario)
+            let fieldNuevoUsuarioDepositario = form.addField({
+                id: 'custpage_field_nuevo_usuario_depositario',
+                label: 'Nuevo Usuario (Depositario)',
+                type: 'text',
+                container: 'custpage_group_traact'
+            });
+            fieldNuevoUsuarioDepositario.updateBreakType({ breakType: 'STARTROW' })
+
             return {
                 form,
                 // Activo fijo
@@ -329,7 +400,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
         }
 
         /******************/
-
 
         /**
          * Defines the Suitelet script trigger point.

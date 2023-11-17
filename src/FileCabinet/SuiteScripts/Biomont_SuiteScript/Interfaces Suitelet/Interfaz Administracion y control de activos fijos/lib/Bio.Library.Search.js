@@ -37,7 +37,7 @@ define(['./Bio.Library.Helper', 'N'],
                     search.createColumn({ name: "custrecord_assetcaretaker", label: "Usuario (Depositorio)" }),
                     search.createColumn({ name: "custrecord_assetpurchaseorder", label: "Orden de compra" }),
                     search.createColumn({ name: "custrecord_bio_est_proc_con_act_fij", label: "Estado Proceso (Administración y control de activos)" }),
-                    search.createColumn({ name: "custrecord_bio_est_acc_con_act_fij", label: "Estado Accion (Administración y control de activos)" }),
+                    search.createColumn({ name: "custrecord_bio_est_acc_con_act_fij", label: "Estado Acción (Administración y control de activos)" }),
                 ],
                 filters: [
                     ["custrecord_assetstatus", "noneof", "4"] // En el listado, no traer los activos fijos con Estado de Activo "Enajenado"
