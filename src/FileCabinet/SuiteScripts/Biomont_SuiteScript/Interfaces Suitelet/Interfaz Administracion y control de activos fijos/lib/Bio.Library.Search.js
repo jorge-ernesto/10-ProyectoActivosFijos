@@ -34,9 +34,10 @@ define(['./Bio.Library.Helper', 'N'],
                     search.createColumn({ name: "custrecord_assetclass", label: "Clase" }),
                     search.createColumn({ name: "custrecord_assetalternateno", label: "Número de activo alternativo" }),
                     search.createColumn({ name: "custrecord_bio_can_fac_obt_can_act_fij", label: "Cantidad Factura" }),
-                    search.createColumn({ name: "custrecord_assetcaretaker", label: "Usuario" }),
+                    search.createColumn({ name: "custrecord_assetcaretaker", label: "Usuario (Depositorio)" }),
+                    search.createColumn({ name: "custrecord_assetpurchaseorder", label: "Orden de compra" }),
                     search.createColumn({ name: "custrecord_bio_est_proc_con_act_fij", label: "Estado Proceso (Administración y control de activos)" }),
-                    search.createColumn({ name: "custrecord_assetpurchaseorder", label: "Orden de compra" })
+                    search.createColumn({ name: "custrecord_bio_est_acc_con_act_fij", label: "Estado Accion (Administración y control de activos)" }),
                 ],
                 filters: [
                     ["custrecord_assetstatus", "noneof", "4"] // En el listado, no traer los activos fijos con Estado de Activo "Enajenado"
@@ -136,10 +137,12 @@ define(['./Bio.Library.Helper', 'N'],
                     let cantidad_factura = row.getValue(columns[12]);
                     let usuario_depositario_id_interno = row.getValue(columns[13]);
                     let usuario_depositario = row.getText(columns[13]);
-                    let estado_proceso_id_interno = row.getValue(columns[14]);
-                    let estado_proceso = row.getText(columns[14]);
-                    let orden_compra_id_interno = row.getValue(columns[15]);
-                    let orden_compra = row.getText(columns[15]);
+                    let orden_compra_id_interno = row.getValue(columns[14]);
+                    let orden_compra = row.getText(columns[14]);
+                    let estado_proceso_id_interno = row.getValue(columns[15]);
+                    let estado_proceso = row.getText(columns[15]);
+                    let estado_accion_id_interno = row.getValue(columns[16]);
+                    let estado_accion = row.getText(columns[16]);
 
                     // Insertar informacion en array
                     resultTransaction.push({
@@ -155,8 +158,9 @@ define(['./Bio.Library.Helper', 'N'],
                         numero_activo_alternativo: numero_activo_alternativo,
                         cantidad_factura: cantidad_factura,
                         usuario_depositario: { id: usuario_depositario_id_interno, nombre: usuario_depositario },
+                        orden_compra: { id: orden_compra_id_interno, numero_documento: orden_compra },
                         estado_proceso: { id: estado_proceso_id_interno, nombre: estado_proceso },
-                        orden_compra: { id: orden_compra_id_interno, numero_documento: orden_compra }
+                        estado_accion: { id: estado_accion_id_interno, nombre: estado_accion },
                     });
                 });
             });
@@ -264,6 +268,39 @@ define(['./Bio.Library.Helper', 'N'],
             return result;
         }
 
-        return { getDataActivosFijos, getAssetTypeList, getClassList, getEstadoProcesoList }
+        function getEstadoAccionList() {
+
+            // Array donde guardaremos la informacion
+            let result = [];
+
+            // Crear search
+            let searchContext = search.create({
+                type: 'customlist_bio_lis_est_acc_con_act',
+                columns: ['internalid', 'name']
+            });
+
+            // Recorrer search
+            searchContext.run().each(node => {
+
+                // Obtener informacion
+                let columns = node.columns;
+                let id = node.getValue(columns[0]);
+                let name = node.getValue(columns[1]);
+
+                // Insertar informacion en array
+                result.push({
+                    id: id,
+                    name: name
+                })
+
+                // La funcion each debes indicarle si quieres que siga iterando o no
+                return true;
+            })
+
+            // Retornar array
+            return result;
+        }
+
+        return { getDataActivosFijos, getAssetTypeList, getClassList, getEstadoProcesoList, getEstadoAccionList }
 
     });
