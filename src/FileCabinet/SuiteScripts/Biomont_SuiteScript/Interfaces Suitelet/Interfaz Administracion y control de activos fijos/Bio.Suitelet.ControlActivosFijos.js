@@ -204,7 +204,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             sublist.addField({ id: 'custpage_clase', type: serverWidget.FieldType.TEXT, label: 'Clase' });
             sublist.addField({ id: 'custpage_numero_activo_alternativo', type: serverWidget.FieldType.TEXT, label: 'Número de activo alternativo' });
             sublist.addField({ id: 'custpage_cantidad_factura', type: serverWidget.FieldType.TEXT, label: 'Cantidad Factura' });
-            sublist.addField({ id: 'custpage_usuario', type: serverWidget.FieldType.TEXT, label: 'Usuario' });
+            sublist.addField({ id: 'custpage_usuario_depositario', type: serverWidget.FieldType.TEXT, label: 'Usuario (Depositario)' });
             sublist.addField({ id: 'custpage_estado_proceso', type: serverWidget.FieldType.TEXT, label: 'Estado Proceso' });
 
             // Setear los datos obtenidos a sublista
@@ -254,7 +254,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     sublist.setSublistValue({ id: 'custpage_cantidad_factura', line: i, value: element.cantidad_factura });
                 }
                 if (element.usuario_depositario.nombre) {
-                    sublist.setSublistValue({ id: 'custpage_usuario', line: i, value: element.usuario_depositario.nombre });
+                    sublist.setSublistValue({ id: 'custpage_usuario_depositario', line: i, value: element.usuario_depositario.nombre });
                 }
                 if (element.estado_proceso.nombre) {
                     sublist.setSublistValue({ id: 'custpage_estado_proceso', line: i, value: element.estado_proceso.nombre });
