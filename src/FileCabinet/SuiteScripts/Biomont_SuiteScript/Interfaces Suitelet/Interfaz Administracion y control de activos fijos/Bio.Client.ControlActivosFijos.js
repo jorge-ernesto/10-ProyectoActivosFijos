@@ -57,7 +57,7 @@ define(['N'],
                 scriptId: scriptId,
                 params: {
                     _button: 'consultar',
-                    _assettype: assettype.join('|'), // ['1','8','27] -> 1|8|27
+                    _assettype: assettype,
                     _subsidiary: subsidiary.join('|'), // ['1','2'] -> 1|2
                     _classification: classification,
                     _numero_activo_alternativo: numero_activo_alternativo,
