@@ -8,7 +8,7 @@ define(['./Bio.Library.Helper', 'N'],
 
         const { log, search } = N;
 
-        function getDataActivosFijos(assettype = [''], subsidiary = [''], classification = '', numero_activo_alternativo = '', nombre = '', estado_proceso = '', id_interno = '') {
+        function getDataActivosFijos(assettype = '', subsidiary = [''], classification = '', numero_activo_alternativo = '', nombre = '', estado_proceso = '', id_interno = '') {
 
             // Declarar variables
             let resultTransaction = [];
@@ -38,15 +38,18 @@ define(['./Bio.Library.Helper', 'N'],
                     search.createColumn({ name: "custrecord_bio_est_proc_con_act_fij", label: "Estado Proceso (Administración y control de activos)" }),
                     search.createColumn({ name: "custrecord_assetpurchaseorder", label: "Orden de compra" })
                 ],
-                filters: []
+                filters: [
+                    ["custrecord_assetstatus", "noneof", "4"] // En el listado, no traer los activos fijos con Estado de Activo "Enajenado"
+                ]
             };
 
+            /****************** Filtros por defecto ******************/
             // Filtro de tipo de activo
-            if (Array.isArray(assettype) && assettype[0] != '') {
+            if (assettype != '') {
                 if (searchObject.filters.length > 0) {
                     searchObject.filters.push('AND');
                 }
-                searchObject.filters.push(["custrecord_assettype", "anyof"].concat(assettype));
+                searchObject.filters.push(["custrecord_assettype", "anyof", assettype]);
             }
 
             // Filtro de subsidiary
@@ -57,6 +60,7 @@ define(['./Bio.Library.Helper', 'N'],
                 searchObject.filters.push(["custrecord_assetsubsidiary", "anyof"].concat(subsidiary));
             }
 
+            /****************** Filtros adicionales ******************/
             // Filtro de clases
             if (classification != '') {
                 if (searchObject.filters.length > 0) {
@@ -161,6 +165,39 @@ define(['./Bio.Library.Helper', 'N'],
             return resultTransaction;
         }
 
+        function getAssetTypeList() {
+
+            // Array donde guardaremos la informacion
+            let result = [];
+
+            // Crear search
+            let searchContext = search.create({
+                type: 'customrecord_ncfar_assettype',
+                columns: ['internalid', 'name']
+            });
+
+            // Recorrer search
+            searchContext.run().each(node => {
+
+                // Obtener informacion
+                let columns = node.columns;
+                let id = node.getValue(columns[0]);
+                let name = node.getValue(columns[1]);
+
+                // Insertar informacion en array
+                result.push({
+                    id: id,
+                    name: name
+                })
+
+                // La funcion each debes indicarle si quieres que siga iterando o no
+                return true;
+            })
+
+            // Retornar array
+            return result;
+        }
+
         function getClassList() {
 
             // Array donde guardaremos la informacion
@@ -227,6 +264,6 @@ define(['./Bio.Library.Helper', 'N'],
             return result;
         }
 
-        return { getDataActivosFijos, getClassList, getEstadoProcesoList }
+        return { getDataActivosFijos, getAssetTypeList, getClassList, getEstadoProcesoList }
 
     });

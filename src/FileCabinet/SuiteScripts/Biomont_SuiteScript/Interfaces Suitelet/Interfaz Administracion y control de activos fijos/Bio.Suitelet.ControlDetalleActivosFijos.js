@@ -169,16 +169,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             fieldCantidadFactura.updateBreakType({ breakType: 'STARTCOL' })
             fieldCantidadFactura.updateDisplayType({ displayType: 'INLINE' });
 
-            // Usuario
-            let fieldUsuarioDepositario = form.addField({
-                id: 'custpage_field_usuario_depositario',
-                label: 'Usuario',
-                type: 'text',
-                container: 'custpage_group'
-            });
-            fieldUsuarioDepositario.updateBreakType({ breakType: 'STARTROW' })
-            fieldUsuarioDepositario.updateDisplayType({ displayType: 'INLINE' });
-
             /****************** Mostrar Grupo de Campos ******************/
             form.addFieldGroup({
                 id: 'custpage_group_update',
@@ -249,15 +239,15 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             });
             fieldDetalleUso.updateBreakType({ breakType: 'STARTCOL' })
 
-            // Usuario Final
-            let fieldUsuarioFinal = form.addField({
-                id: 'custpage_field_usuario_final',
-                label: 'Usuario Final',
+            // Usuario (Depositario)
+            let fieldUsuarioDepositario = form.addField({
+                id: 'custpage_field_usuario_depositario',
+                label: 'Usuario (Depositario)',
                 type: 'select',
                 source: 'employee',
                 container: 'custpage_group_update'
             });
-            fieldUsuarioFinal.updateBreakType({ breakType: 'STARTROW' })
+            fieldUsuarioDepositario.updateBreakType({ breakType: 'STARTROW' })
 
             // Fecha de activacion
             let fieldFechaActivacion = form.addField({
@@ -292,7 +282,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 fieldClase,
                 fieldNumeroActivoAlternativo,
                 fieldCantidadFactura,
-                fieldUsuarioDepositario,
                 // Grupo de Campos - Datos a actualizar
                 fieldNumeroGuia,
                 fieldFechaEmision,
@@ -301,7 +290,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 fieldSerie,
                 fieldEstado,
                 fieldDetalleUso,
-                fieldUsuarioFinal,
+                fieldUsuarioDepositario,
                 fieldFechaActivacion,
                 fieldOtros
             }
@@ -349,7 +338,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     fieldClase,
                     fieldNumeroActivoAlternativo,
                     fieldCantidadFactura,
-                    fieldUsuarioDepositario,
                     // Grupo de Campos - Datos a actualizar
                     fieldNumeroGuia,
                     fieldFechaEmision,
@@ -358,7 +346,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     fieldSerie,
                     fieldEstado,
                     fieldDetalleUso,
-                    fieldUsuarioFinal,
+                    fieldUsuarioDepositario,
                     fieldFechaActivacion,
                     fieldOtros
                 } = createForm(dataActivoFijo);
@@ -372,7 +360,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     fieldSerie.updateDisplayType({ displayType: 'INLINE' });
                     fieldEstado.updateDisplayType({ displayType: 'INLINE' });
                     fieldDetalleUso.updateDisplayType({ displayType: 'INLINE' });
-                    fieldUsuarioFinal.updateDisplayType({ displayType: 'INLINE' });
+                    fieldUsuarioDepositario.updateDisplayType({ displayType: 'INLINE' });
                     fieldFechaActivacion.updateDisplayType({ displayType: 'INLINE' });
                     fieldOtros.updateDisplayType({ displayType: 'INLINE' });
                 }
@@ -391,7 +379,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 fieldClase.defaultValue = dataActivoFijo[0].centro_costo.nombre;
                 fieldNumeroActivoAlternativo.defaultValue = dataActivoFijo[0].numero_activo_alternativo;
                 fieldCantidadFactura.defaultValue = dataActivoFijo[0].cantidad_factura;
-                fieldUsuarioDepositario.defaultValue = dataActivoFijo[0].usuario_depositario.nombre;
                 // Datos a actualizar
                 fieldNumeroGuia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_num_guia_con_act_fij');
                 fieldFechaEmision.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_emi_con_act_fij');
@@ -400,7 +387,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 fieldSerie.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nserie_con_act_fij');
                 fieldEstado.defaultValue = dataActivoFijo_.getValue('custrecord_bio_estado_con_act_fij');
                 fieldDetalleUso.defaultValue = dataActivoFijo_.getValue('custrecord_bio_det_uso_con_act_fij');
-                fieldUsuarioFinal.defaultValue = dataActivoFijo_.getValue('custrecord_bio_usu_fin_con_act_fij');
+                fieldUsuarioDepositario.defaultValue = dataActivoFijo[0].usuario_depositario.id;
                 fieldFechaActivacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_act_con_act_fij');
                 fieldOtros.defaultValue = dataActivoFijo_.getValue('custrecord_bio_otros_con_act_fij');
 
@@ -416,7 +403,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 let nserie = scriptContext.request.parameters['custpage_field_nserie'];
                 let estado = scriptContext.request.parameters['custpage_field_estado'];
                 let detalle_uso = scriptContext.request.parameters['custpage_field_detalle_uso'];
-                let usuario_final = scriptContext.request.parameters['custpage_field_usuario_final'];
+                let usuario_depositario = scriptContext.request.parameters['custpage_field_usuario_depositario'];
                 let fecha_activacion = scriptContext.request.parameters['custpage_field_fecha_activacion'];
                 let otros = scriptContext.request.parameters['custpage_field_otros'];
 
@@ -429,7 +416,7 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                 activoFijoRecord.setValue('custrecord_bio_nserie_con_act_fij', nserie);
                 activoFijoRecord.setValue('custrecord_bio_estado_con_act_fij', estado);
                 activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
-                activoFijoRecord.setValue('custrecord_bio_usu_fin_con_act_fij', usuario_final);
+                // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // Actualiza datos del Usuario Depositario
                 activoFijoRecord.setText('custrecord_bio_fec_act_con_act_fij', fecha_activacion);
                 activoFijoRecord.setValue('custrecord_bio_otros_con_act_fij', otros);
                 activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', 2);

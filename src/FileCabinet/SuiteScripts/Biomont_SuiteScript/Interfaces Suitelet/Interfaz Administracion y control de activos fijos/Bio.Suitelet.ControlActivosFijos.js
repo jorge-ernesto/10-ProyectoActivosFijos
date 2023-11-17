@@ -60,11 +60,12 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             let fieldAssetType = form.addField({
                 id: 'custpage_field_assettype',
                 label: 'Tipos de activos',
-                type: 'multiselect',
-                source: 'customrecord_ncfar_assettype',
+                type: 'select',
+                // source: 'customrecord_ncfar_assettype',
                 container: 'custpage_group'
             });
             fieldAssetType.updateBreakType({ breakType: 'STARTCOL' })
+            setFieldAssetType(fieldAssetType);
 
             // Subsidiarias
             let fieldSubsidiary = form.addField({
@@ -118,6 +119,25 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
             setFieldEstadoProceso(fieldEstadoProceso);
 
             return { form, fieldAssetType, fieldSubsidiary, fieldClass, fieldNumeroActivoAlternativo, fieldNombre, fieldEstadoProceso }
+        }
+
+        function setFieldAssetType(fieldAssetType) {
+            // Obtener datos por search
+            let assetTypeList = objSearch.getAssetTypeList();
+
+            // Setear un primer valor vacio
+            fieldAssetType.addSelectOption({
+                value: '',
+                text: ''
+            });
+
+            // Setear los datos obtenidos manualmente al campo supervisor personalizado
+            assetTypeList.forEach((element, i) => {
+                fieldAssetType.addSelectOption({
+                    value: element.id,
+                    text: element.name
+                })
+            })
         }
 
         function setFieldClass(fieldClass) {
@@ -273,7 +293,6 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     // objHelper.error_log('debug', { assettype, subsidiary });
 
                     // Setear datos al formulario
-                    assettype = assettype.split('|'); // 1|8|27 -> ['1','8','27]
                     subsidiary = subsidiary.split('|'); // 1|2 -> ['1','2']
                     fieldAssetType.defaultValue = assettype;
                     fieldSubsidiary.defaultValue = subsidiary;
