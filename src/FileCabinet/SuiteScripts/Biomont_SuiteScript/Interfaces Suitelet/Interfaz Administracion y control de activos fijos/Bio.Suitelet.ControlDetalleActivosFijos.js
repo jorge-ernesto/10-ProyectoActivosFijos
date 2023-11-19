@@ -6,398 +6,11 @@
  * @NApiVersion 2.1
  * @NScriptType Suitelet
  */
-define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
+define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Library.Helper', 'N'],
 
-    function (objHelper, objSearch, N) {
+    function (objSearch, objWidget, objHelper, N) {
 
-        const { log, record, redirect, runtime, url } = N;
-        const { serverWidget } = N.ui;
-
-        const DATA = {
-            'clientScriptModulePath': './Bio.Client.ControlActivosFijos.js'
-        }
-
-        /******************/
-
-        // Crear formulario
-        function createForm(dataActivoFijo) {
-            // Crear formulario
-            let form = serverWidget.createForm({
-                title: `Administración y control de activo`,
-                // title: `Administración y control de activo: ${dataActivoFijo[0].activo_fijo.id} ${dataActivoFijo[0].activo_fijo.nombre}`,
-                hideNavbar: false
-            })
-
-            // Asociar ClientScript al formulario
-            form.clientScriptModulePath = DATA.clientScriptModulePath;
-
-            // Mostrar botones
-            form.addSubmitButton({
-                label: 'Guardar'
-            });
-
-            // Mostrar SubPestañas
-            form.addSubtab({
-                id: 'custpage_subtab',
-                label: 'Detalle de activo'
-            });
-
-            /****************** Mostrar Grupo de Campos - Activo fijo ******************/
-            form.addFieldGroup({
-                id: 'custpage_group_actfij',
-                label: 'Activo fijo',
-                tab: 'custpage_subtab'
-            });
-
-            // Activo Fijo ID interno
-            let fieldActivoFijoIdInterno = form.addField({
-                id: 'custpage_field_activo_fijo_id_interno',
-                label: 'Activo Fijo ID interno',
-                type: 'text',
-                container: 'custpage_group_datpro'
-            });
-            fieldActivoFijoIdInterno.updateDisplayType({ displayType: 'HIDDEN' });
-
-            // Estado Accion
-            let fieldEstadoAccion = form.addField({
-                id: 'custpage_field_estado_accion',
-                label: 'Estado accion',
-                type: 'select',
-                // source: 'customlist_bio_lis_est_acc_con_act',
-                container: 'custpage_group_actfij'
-            });
-            fieldEstadoAccion.updateBreakType({ breakType: 'STARTCOL' })
-            setFieldEstadoAccion(fieldEstadoAccion);
-
-            /****************** Mostrar Grupo de Campos - Datos del proveedor ******************/
-            form.addFieldGroup({
-                id: 'custpage_group_datpro',
-                label: 'Datos del proveedor',
-                tab: 'custpage_subtab'
-            });
-
-            // Proveedor
-            let fieldProveedor = form.addField({
-                id: 'custpage_field_proveedor',
-                label: 'Proveedor',
-                type: 'text',
-                container: 'custpage_group_datpro'
-            });
-            fieldProveedor.updateBreakType({ breakType: 'STARTCOL' })
-            fieldProveedor.updateDisplayType({ displayType: 'INLINE' });
-
-            // Orden de Compra
-            let fieldOrdenCompra = form.addField({
-                id: 'custpage_field_orden_compra',
-                label: 'Orden de Compra',
-                type: 'select',
-                source: 'purchaseorder',
-                container: 'custpage_group_datpro'
-            });
-            fieldOrdenCompra.updateBreakType({ breakType: 'STARTROW' })
-            fieldOrdenCompra.updateDisplayType({ displayType: 'INLINE' });
-
-            // Fecha de compra
-            let fieldFechaCompra = form.addField({
-                id: 'custpage_field_fecha_compra',
-                label: 'Fecha de compra',
-                type: 'date',
-                container: 'custpage_group_datpro'
-            });
-            fieldFechaCompra.updateBreakType({ breakType: 'STARTCOL' })
-            fieldFechaCompra.updateDisplayType({ displayType: 'INLINE' });
-
-            // Transacción
-            let fieldTransaccion = form.addField({
-                id: 'custpage_field_transaccion',
-                label: 'Transacción',
-                type: 'text',
-                container: 'custpage_group_datpro'
-            });
-            fieldTransaccion.updateBreakType({ breakType: 'STARTROW' })
-            fieldTransaccion.updateDisplayType({ displayType: 'INLINE' });
-
-            // Costo original
-            let fieldCostoOriginal = form.addField({
-                id: 'custpage_field_costo_original',
-                label: 'Costo original',
-                type: 'currency',
-                container: 'custpage_group_datpro'
-            });
-            fieldCostoOriginal.updateBreakType({ breakType: 'STARTROW' })
-            fieldCostoOriginal.updateDisplayType({ displayType: 'INLINE' });
-
-            // Número de guía
-            let fieldNumeroGuia = form.addField({
-                id: 'custpage_field_numero_guia',
-                label: 'Número de guía',
-                type: 'text',
-                container: 'custpage_group_datpro'
-            });
-            fieldNumeroGuia.updateBreakType({ breakType: 'STARTCOL' })
-
-            /****************** Mostrar Grupo de Campos - Datos del bien ******************/
-            form.addFieldGroup({
-                id: 'custpage_group_datbie',
-                label: 'Datos del bien',
-                tab: 'custpage_subtab'
-            });
-
-            // Tipo de activo
-            let fieldTipoActivo = form.addField({
-                id: 'custpage_field_tipo_activo',
-                label: 'Tipo de activo',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldTipoActivo.updateBreakType({ breakType: 'STARTCOL' })
-            fieldTipoActivo.updateDisplayType({ displayType: 'INLINE' });
-
-            // Activo Fijo
-            let fieldActivoFijo = form.addField({
-                id: 'custpage_field_activo_fijo',
-                label: 'Activo Fijo',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldActivoFijo.updateBreakType({ breakType: 'STARTROW' })
-            fieldActivoFijo.updateDisplayType({ displayType: 'INLINE' });
-
-            // Descripción
-            let fieldDescripcion = form.addField({
-                id: 'custpage_field_descripcion',
-                label: 'Descripción',
-                type: 'textarea',
-                container: 'custpage_group_datbie'
-            });
-            fieldDescripcion.updateBreakType({ breakType: 'STARTROW' })
-            fieldDescripcion.updateDisplayType({ displayType: 'INLINE' });
-
-            // Centro de Costo (Clase)
-            let fieldClase = form.addField({
-                id: 'custpage_field_clase',
-                label: 'Centro de Costo (Clase)',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldClase.updateBreakType({ breakType: 'STARTCOL' })
-            fieldClase.updateDisplayType({ displayType: 'INLINE' });
-
-            // Marca
-            let fieldMarca = form.addField({
-                id: 'custpage_field_marca',
-                label: 'Marca',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldMarca.updateBreakType({ breakType: 'STARTROW' })
-
-            // Modelo
-            let fieldModelo = form.addField({
-                id: 'custpage_field_modelo',
-                label: 'Modelo',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldModelo.updateBreakType({ breakType: 'STARTROW' })
-
-            // Fecha de emisión
-            let fieldFechaEmision = form.addField({
-                id: 'custpage_field_fecha_emision',
-                label: 'Fecha de emisión',
-                type: 'date',
-                container: 'custpage_group_datbie'
-            });
-            fieldFechaEmision.updateBreakType({ breakType: 'STARTCOL' })
-
-            // Fecha de activacion
-            let fieldFechaActivacion = form.addField({
-                id: 'custpage_field_fecha_activacion',
-                label: 'Fecha de activación',
-                type: 'date',
-                container: 'custpage_group_datbie'
-            });
-            fieldFechaActivacion.updateBreakType({ breakType: 'STARTROW' })
-
-            // Detalle de uso
-            let fieldDetalleUso = form.addField({
-                id: 'custpage_field_detalle_uso',
-                label: 'Detalle de uso',
-                type: 'textarea',
-                container: 'custpage_group_datbie'
-            });
-            fieldDetalleUso.updateBreakType({ breakType: 'STARTROW' })
-
-            // N. Serie
-            let fieldSerie = form.addField({
-                id: 'custpage_field_nserie',
-                label: 'N. Serie',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldSerie.updateBreakType({ breakType: 'STARTROW' })
-
-            // Usuario (Depositario)
-            let fieldUsuarioDepositario = form.addField({
-                id: 'custpage_field_usuario_depositario',
-                label: 'Usuario (Depositario)',
-                type: 'select',
-                source: 'employee',
-                container: 'custpage_group_datbie'
-            });
-            fieldUsuarioDepositario.updateBreakType({ breakType: 'STARTROW' })
-
-            // Número de activo alternativo
-            let fieldNumeroActivoAlternativo = form.addField({
-                id: 'custpage_field_numero_activo_alternativo',
-                label: 'Número de activo alternativo',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldNumeroActivoAlternativo.updateBreakType({ breakType: 'STARTCOL' })
-            fieldNumeroActivoAlternativo.updateDisplayType({ displayType: 'INLINE' });
-
-            // Cantidad Factura
-            let fieldCantidadFactura = form.addField({
-                id: 'custpage_field_cantidad_factura',
-                label: 'Cantidad Factura',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldCantidadFactura.updateBreakType({ breakType: 'STARTROW' })
-            fieldCantidadFactura.updateDisplayType({ displayType: 'INLINE' });
-
-            // Estado
-            let fieldEstado = form.addField({
-                id: 'custpage_field_estado',
-                label: 'Estado',
-                type: 'text',
-                container: 'custpage_group_datbie'
-            });
-            fieldEstado.updateBreakType({ breakType: 'STARTROW' })
-
-            // Otros
-            let fieldOtros = form.addField({
-                id: 'custpage_field_otros',
-                label: 'Otros',
-                type: 'textarea',
-                container: 'custpage_group_datbie'
-            });
-            fieldOtros.updateBreakType({ breakType: 'STARTROW' })
-
-            /****************** Mostrar Grupo de Campos - Baja de activo ******************/
-            form.addFieldGroup({
-                id: 'custpage_group_bajact',
-                label: 'Baja de activo',
-                tab: 'custpage_subtab'
-            });
-
-            // Motivo de baja
-            let fieldMotivoBaja = form.addField({
-                id: 'custpage_field_motivo_baja',
-                label: 'Motivo de baja',
-                type: 'select',
-                container: 'custpage_group_bajact'
-            });
-            fieldMotivoBaja.updateBreakType({ breakType: 'STARTCOL' })
-
-            // Archivo de baja
-            let fieldArchivoBaja = form.addField({
-                id: 'custpage_field_archivo_baja',
-                label: 'Archivo de baja',
-                type: 'text',
-                container: 'custpage_group_bajact'
-            });
-            fieldArchivoBaja.updateBreakType({ breakType: 'STARTCOL' })
-
-            /****************** Mostrar Grupo de Campos - Transferencia de activo ******************/
-            form.addFieldGroup({
-                id: 'custpage_group_traact',
-                label: 'Transferencia de activo',
-                tab: 'custpage_subtab'
-            });
-
-            // Nuevo Centro de Costo (Clase)
-            let fieldNuevaClase = form.addField({
-                id: 'custpage_field_nueva_clase',
-                label: 'Nuevo Centro de Costo (Clase)',
-                type: 'select',
-                source: 'classification',
-                container: 'custpage_group_traact'
-            });
-            fieldNuevaClase.updateBreakType({ breakType: 'STARTCOL' })
-
-            // Nueva Ubicacion
-            let fieldNuevaUbicacion = form.addField({
-                id: 'custpage_field_nueva_ubicacion',
-                label: 'Nueva Ubicación',
-                type: 'text',
-                container: 'custpage_group_traact'
-            });
-            fieldNuevaUbicacion.updateBreakType({ breakType: 'STARTROW' })
-
-            // Usuario Notificado por Transferencia
-            let fieldUsuarioNotificadoTransferencia = form.addField({
-                id: 'custpage_field_usuario_notificado_transferencia',
-                label: 'Usuario Notificado por Transferencia',
-                type: 'select',
-                source: 'employee',
-                container: 'custpage_group_traact'
-            });
-            fieldUsuarioNotificadoTransferencia.updateBreakType({ breakType: 'STARTCOL' })
-
-            // Nuevo Usuario (Depositario)
-            let fieldNuevoUsuarioDepositario = form.addField({
-                id: 'custpage_field_nuevo_usuario_depositario',
-                label: 'Nuevo Usuario (Depositario)',
-                type: 'text',
-                container: 'custpage_group_traact'
-            });
-            fieldNuevoUsuarioDepositario.updateBreakType({ breakType: 'STARTROW' })
-
-            return {
-                form,
-                // Activo fijo
-                fieldActivoFijoIdInterno,
-                fieldEstadoAccion,
-                // Datos del proveedor
-                fieldProveedor,
-                fieldOrdenCompra,
-                fieldFechaCompra,
-                fieldTransaccion,
-                fieldCostoOriginal,
-                fieldNumeroGuia,
-                // Datos del bien
-                fieldTipoActivo,
-                fieldActivoFijo,
-                fieldDescripcion,
-                fieldClase,
-                fieldMarca,
-                fieldModelo,
-                fieldFechaEmision,
-                fieldFechaActivacion,
-                fieldDetalleUso,
-                fieldSerie,
-                fieldUsuarioDepositario,
-                fieldNumeroActivoAlternativo,
-                fieldCantidadFactura,
-                fieldEstado,
-                fieldOtros
-            }
-        }
-
-        function setFieldEstadoAccion(fieldEstadoAccion) {
-            // Obtener datos por search
-            let estadoAccionList = objSearch.getEstadoAccionList();
-
-            // Setear los datos obtenidos manualmente al campo supervisor personalizado
-            estadoAccionList.forEach((element, i) => {
-                fieldEstadoAccion.addSelectOption({
-                    value: element.id,
-                    text: element.name
-                })
-            })
-        }
+        const { log, record, redirect, runtime } = N;
 
         /******************/
 
@@ -430,114 +43,195 @@ define(['./lib/Bio.Library.Helper', './lib/Bio.Library.Search', 'N'],
                     form,
                     // Activo fijo
                     fieldActivoFijoIdInterno,
-                    fieldEstadoAccion, // Editable
+                    fieldEstadoAccion,
                     // Datos del proveedor
                     fieldProveedor,
                     fieldOrdenCompra,
                     fieldFechaCompra,
                     fieldTransaccion,
                     fieldCostoOriginal,
-                    fieldNumeroGuia, // Editable
+                    fieldNumeroActivoAlternativo,
+                    fieldCantidadFactura,
+                    fieldNumeroGuia,
                     // Datos del bien
                     fieldTipoActivo,
                     fieldActivoFijo,
                     fieldDescripcion,
+                    fieldEstadoActivo,
                     fieldClase,
-                    fieldMarca, // Editable
-                    fieldModelo, // Editable
-                    fieldFechaEmision, // Editable
-                    fieldFechaActivacion, // Editable
-                    fieldDetalleUso, // Editable
-                    fieldSerie, // Editable
-                    fieldUsuarioDepositario, // Editable
-                    fieldNumeroActivoAlternativo,
-                    fieldCantidadFactura,
-                    fieldEstado, // Editable
-                    fieldOtros // Editable
-                } = createForm(dataActivoFijo);
+                    fieldMarca,
+                    fieldModelo,
+                    fieldFechaActivacion,
+                    fieldSerie,
+                    fieldUsuarioDepositario,
+                    fieldUbicacion,
+                    fieldEstadoBien,
+                    fieldDetalleUso,
+                    // Baja de activo
+                    fieldMotivoBaja,
+                    fieldDetalleBaja,
+                    fieldAnteriorClase_Baja,
+                    fieldUsuarioFirma_AnteriorClase_Baja,
+                    fieldFechaFirma_AnteriorClase_Baja,
+                    botonAnteriorClase_Baja,
+                    fieldArchivoBaja,
+                    // Transferencia de activo
+                    fieldAnteriorClase_Transferencia,
+                    fieldUsuarioFirma_AnteriorClase_Transferencia,
+                    fieldFechaFirma_AnteriorClase_Transferencia,
+                    botonAnteriorClase_Transferencia,
+                    fieldNuevaClase_Transferencia,
+                    fieldUsuarioFirma_NuevaClase_Transferencia,
+                    fieldFechaFirma_NuevaClase_Transferencia,
+                    botonNuevaClase_Transferencia,
+                    fieldNuevaUbicacion,
+                    fieldNuevoUsuarioDepositario
+                } = objWidget.createFormDetail(dataActivoFijo);
 
-                // Deshabilitar los campos cuando este en estado "Procesado"
-                if (dataActivoFijo[0].estado_proceso.id == 2) {
+                /****************** Deshabilitar campos ******************/
+                // Deshabilitar los campos cuando este en estado "ALTA", "BAJA" o "TRANSFERENCIA"
+                if (Number(dataActivoFijo[0].estado_accion.id || 0) > 0) {
+                    // Datos del proveedor
                     fieldNumeroGuia.updateDisplayType({ displayType: 'INLINE' });
-                    fieldFechaEmision.updateDisplayType({ displayType: 'INLINE' });
+                    // Datos del bien
                     fieldMarca.updateDisplayType({ displayType: 'INLINE' });
                     fieldModelo.updateDisplayType({ displayType: 'INLINE' });
-                    fieldSerie.updateDisplayType({ displayType: 'INLINE' });
-                    fieldEstado.updateDisplayType({ displayType: 'INLINE' });
-                    fieldDetalleUso.updateDisplayType({ displayType: 'INLINE' });
-                    fieldUsuarioDepositario.updateDisplayType({ displayType: 'INLINE' });
                     fieldFechaActivacion.updateDisplayType({ displayType: 'INLINE' });
-                    fieldOtros.updateDisplayType({ displayType: 'INLINE' });
+                    fieldSerie.updateDisplayType({ displayType: 'INLINE' });
+                    fieldUsuarioDepositario.updateDisplayType({ displayType: 'INLINE' });
+                    fieldUbicacion.updateDisplayType({ displayType: 'INLINE' });
+                    fieldEstadoBien.updateDisplayType({ displayType: 'INLINE' });
+                    fieldDetalleUso.updateDisplayType({ displayType: 'INLINE' });
                 }
 
-                // Setear datos al formulario
+                // Deshabilitar campo "Fecha de Activación" cuando el "Estado Activo" es diferente de "Nuevo"
+                if (!(dataActivoFijo[0].estado_activo.id == 6 || dataActivoFijo[0].estado_activo.id == 'Nuevo')) {
+                    // Datos del bien
+                    fieldFechaActivacion.updateDisplayType({ displayType: 'INLINE' });
+                }
+
+                /****************** Setear datos al formulario ******************/
                 // Activo fijo
                 fieldActivoFijoIdInterno.defaultValue = dataActivoFijo[0].activo_fijo.id_interno;
                 fieldEstadoAccion.defaultValue = dataActivoFijo[0].estado_accion.id; // Editable
+
                 // Datos del proveedor
                 fieldProveedor.defaultValue = dataActivoFijo[0].proveedor;
                 fieldOrdenCompra.defaultValue = dataActivoFijo[0].orden_compra.id;
                 fieldFechaCompra.defaultValue = dataActivoFijo[0].fecha_compra;
                 fieldTransaccion.defaultValue = dataActivoFijo[0].factura_compra.numero_documento;
                 fieldCostoOriginal.defaultValue = dataActivoFijo[0].costo_original;
+                fieldNumeroActivoAlternativo.defaultValue = dataActivoFijo[0].numero_activo_alternativo;
+                fieldCantidadFactura.defaultValue = dataActivoFijo[0].cantidad_factura;
                 fieldNumeroGuia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_num_guia_con_act_fij'); // Editable
+
                 // Datos del bien
                 fieldTipoActivo.defaultValue = dataActivoFijo[0].tipo_activo.nombre;
                 fieldActivoFijo.defaultValue = dataActivoFijo[0].activo_fijo.id + ' ' + dataActivoFijo[0].activo_fijo.nombre
                 fieldDescripcion.defaultValue = dataActivoFijo[0].descripcion_activo;
+                fieldEstadoActivo.defaultValue = dataActivoFijo[0].estado_activo.nombre;
                 fieldClase.defaultValue = dataActivoFijo[0].centro_costo.nombre;
                 fieldMarca.defaultValue = dataActivoFijo_.getValue('custrecord_bio_marca_con_act_fij'); // Editable
                 fieldModelo.defaultValue = dataActivoFijo_.getValue('custrecord_bio_modelo_con_act_fij'); // Editable
-                fieldFechaEmision.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_emi_con_act_fij'); // Editable
-                fieldFechaActivacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_act_con_act_fij'); // Editable
+                fieldFechaActivacion.defaultValue = dataActivoFijo_.getValue('custrecord_assetdeprstartdate'); // Editable // INFORMACION CAMPO EXISTENTE
+                fieldSerie.defaultValue = dataActivoFijo_.getValue('custrecord_assetserialno'); // Editable // INFORMACION CAMPO EXISTENTE
+                fieldUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_assetcaretaker'); // Editable // INFORMACION CAMPO EXISTENTE
+                fieldUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_ubicacion_con_act_fij'); // Editable
+                fieldEstadoBien.defaultValue = dataActivoFijo_.getValue('custrecord_bio_estado_con_act_fij'); // Editable
                 fieldDetalleUso.defaultValue = dataActivoFijo_.getValue('custrecord_bio_det_uso_con_act_fij'); // Editable
-                fieldSerie.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nserie_con_act_fij'); // Editable
-                fieldUsuarioDepositario.defaultValue = dataActivoFijo[0].usuario_depositario.id; // Editable
-                fieldNumeroActivoAlternativo.defaultValue = dataActivoFijo[0].numero_activo_alternativo;
-                fieldCantidadFactura.defaultValue = dataActivoFijo[0].cantidad_factura;
-                fieldEstado.defaultValue = dataActivoFijo_.getValue('custrecord_bio_estado_con_act_fij'); // Editable
-                fieldOtros.defaultValue = dataActivoFijo_.getValue('custrecord_bio_otros_con_act_fij'); // Editable
+
+                // Baja de activo
+                fieldMotivoBaja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_mot_baja_con_act_fij'); // Editable
+                fieldDetalleBaja.defaultValue = dataActivoFijo_.getValue('custrecord_det_baja_con_act_fij'); // Editable
+                fieldAnteriorClase_Baja.defaultValue = dataActivoFijo[0].centro_costo.nombre;
+                fieldUsuarioFirma_AnteriorClase_Baja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_usufir_baja_con_act'); // Editable
+                fieldFechaFirma_AnteriorClase_Baja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fecfir_baja_con_act'); // Editable
+
+                // Transferencia de activo
+                fieldAnteriorClase_Transferencia.defaultValue = dataActivoFijo[0].centro_costo.nombre;
+                fieldUsuarioFirma_AnteriorClase_Transferencia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_usufirantcc_trans_con_act'); // Editable
+                fieldFechaFirma_AnteriorClase_Transferencia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fecfirantcc_trans_con_act'); // Editable
+                fieldNuevaClase_Transferencia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_cc_con_act_fij'); // Editable
+                fieldUsuarioFirma_NuevaClase_Transferencia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_usufirnuecc_trans_con_act'); // Editable
+                fieldFechaFirma_NuevaClase_Transferencia.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fecfirnuecc_trans_con_act'); // Editable
+                fieldNuevaUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_ubicacion_con_act_fij'); // Editable
+                fieldNuevoUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_usu_depo_con_act_fij'); // Editable
 
                 // Renderizar formulario
                 scriptContext.response.writePage(form);
             } else { // POST
-                // Recibir parametros por POST
+                /****************** Recibir parametros por POST ******************/
                 // Activo fijo
                 let activo_fijo_id_interno = scriptContext.request.parameters['custpage_field_activo_fijo_id_interno'];
                 let estado_accion = scriptContext.request.parameters['custpage_field_estado_accion'];
+
                 // Datos del proveedor
                 let numero_guia = scriptContext.request.parameters['custpage_field_numero_guia'];
+
                 // Datos del bien
                 let marca = scriptContext.request.parameters['custpage_field_marca'];
                 let modelo = scriptContext.request.parameters['custpage_field_modelo'];
-                let fecha_emision = scriptContext.request.parameters['custpage_field_fecha_emision'];
-                let fecha_activacion = scriptContext.request.parameters['custpage_field_fecha_activacion'];
+                let fecha_activacion = scriptContext.request.parameters['custpage_field_fecha_activacion']; // ACTUALIZA CAMPO EXISTENTE
+                let nserie = scriptContext.request.parameters['custpage_field_nserie']; // ACTUALIZA CAMPO EXISTENTE
+                let usuario_depositario = scriptContext.request.parameters['custpage_field_usuario_depositario']; // ACTUALIZA CAMPO EXISTENTE
+                let ubicacion = scriptContext.request.parameters['custpage_field_ubicacion'];
+                let estado_bien = scriptContext.request.parameters['custpage_field_estado_bien'];
                 let detalle_uso = scriptContext.request.parameters['custpage_field_detalle_uso'];
-                let nserie = scriptContext.request.parameters['custpage_field_nserie'];
-                let usuario_depositario = scriptContext.request.parameters['custpage_field_usuario_depositario'];
-                let estado = scriptContext.request.parameters['custpage_field_estado'];
-                let otros = scriptContext.request.parameters['custpage_field_otros'];
 
-                // Actualizar Activos Fijos
+                // Baja de activo
+                let motivo_baja = scriptContext.request.parameters['custpage_field_motivo_baja'];
+                let detalle_baja = scriptContext.request.parameters['custpage_field_detalle_baja'];
+                let usuariofirma_anteriorclase_baja = scriptContext.request.parameters['custpage_field_usuariofirma_anteriorclase_baja'];
+                let fechafirma_anteriorclase_baja = scriptContext.request.parameters['custpage_field_fechafirma_anteriorclase_baja'];
+
+                // Transferencia de activo
+                let usuariofirma_anteriorclase_transferencia = scriptContext.request.parameters['custpage_field_usuariofirma_anteriorclase_transferencia'];
+                let fechafirma_anteriorclase_transferencia = scriptContext.request.parameters['custpage_field_fechafirma_anteriorclase_transferencia'];
+                let nuevaclase_transferencia = scriptContext.request.parameters['custpage_field_nuevaclase_transferencia'];
+                let usuariofirma_nuevaclase_transferencia = scriptContext.request.parameters['custpage_field_usuariofirma_nuevaclase_transferencia'];
+                let fechafirma_nuevaclase_transferencia = scriptContext.request.parameters['custpage_field_fechafirma_nuevaclase_transferencia'];
+                let nueva_ubicacion = scriptContext.request.parameters['custpage_field_nueva_ubicacion'];
+                let nuevo_usuario_depositario = scriptContext.request.parameters['custpage_field_nuevo_usuario_depositario'];
+
+                /****************** Actualizar Activos Fijos ******************/
                 // Activo fijo
                 let activoFijoRecord = record.load({ type: 'customrecord_ncfar_asset', id: activo_fijo_id_interno });
                 activoFijoRecord.setValue('custrecord_bio_est_acc_con_act_fij', estado_accion);
+                activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', 2);
+
                 // Datos del proveedor
                 activoFijoRecord.setValue('custrecord_bio_num_guia_con_act_fij', numero_guia);
+
                 // Datos del bien
                 activoFijoRecord.setValue('custrecord_bio_marca_con_act_fij', marca);
                 activoFijoRecord.setValue('custrecord_bio_modelo_con_act_fij', modelo);
-                activoFijoRecord.setText('custrecord_bio_fec_emi_con_act_fij', fecha_emision);
-                activoFijoRecord.setText('custrecord_bio_fec_act_con_act_fij', fecha_activacion);
+                if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') { // Solo guardara "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
+                    // activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE
+                }
+                // activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
+                // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
+                activoFijoRecord.setValue('custrecord_bio_ubicacion_con_act_fij', ubicacion);
+                activoFijoRecord.setValue('custrecord_bio_est_bien_con_act_fij', estado_bien);
                 activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
-                activoFijoRecord.setValue('custrecord_bio_nserie_con_act_fij', nserie);
-                // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // Actualiza datos del Usuario Depositario
-                activoFijoRecord.setValue('custrecord_bio_estado_con_act_fij', estado);
-                activoFijoRecord.setValue('custrecord_bio_otros_con_act_fij', otros);
-                activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', 2);
+
+                // Baja de activo
+                activoFijoRecord.setValue('custrecord_bio_mot_baja_con_act_fij', motivo_baja);
+                activoFijoRecord.setValue('custrecord_det_baja_con_act_fij', detalle_baja);
+                activoFijoRecord.setValue('custrecord_bio_usufir_baja_con_act', usuariofirma_anteriorclase_baja);
+                activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', fechafirma_anteriorclase_baja);
+
+                // Transferencia de activo
+                activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', usuariofirma_anteriorclase_transferencia);
+                activoFijoRecord.setValue('custrecord_bio_fecfirantcc_trans_con_act', fechafirma_anteriorclase_transferencia);
+                activoFijoRecord.setValue('custrecord_bio_nue_cc_con_act_fij', nuevaclase_transferencia);
+                activoFijoRecord.setValue('custrecord_bio_usufirnuecc_trans_con_act', usuariofirma_nuevaclase_transferencia);
+                activoFijoRecord.setValue('custrecord_bio_fecfirnuecc_trans_con_act', fechafirma_nuevaclase_transferencia);
+                activoFijoRecord.setValue('custrecord_bio_nue_ubicacion_con_act_fij', nueva_ubicacion);
+                activoFijoRecord.setValue('custrecord_bio_nue_usu_depo_con_act_fij', nuevo_usuario_depositario);
+
                 activoFijoRecord.save();
 
-                // Redirigir a este mismo Suitelet (Redirigir a si mismo)
+                /****************** Redirigir a este mismo Suitelet (Redirigir a si mismo) ******************/
                 redirect.toSuitelet({
                     scriptId: runtime.getCurrentScript().id,
                     deploymentId: runtime.getCurrentScript().deploymentId,

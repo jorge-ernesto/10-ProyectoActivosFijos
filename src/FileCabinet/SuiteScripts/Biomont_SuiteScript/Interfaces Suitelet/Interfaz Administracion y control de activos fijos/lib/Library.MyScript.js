@@ -34,6 +34,13 @@ define(['N'],
             });
         }
 
-        return { adjuntarArchivo }
+        function actualizarFechaInicioDepreciacion() {
+
+            let activoFijoRecord = record.load({ type: 'customrecord_ncfar_asset', id: 44705 });
+            activoFijoRecord.setText('custrecord_assetdeprstartdate', '01/08/2023'); // 01/08/2023 - 31/07/2043
+            activoFijoRecord.save();
+        }
+
+        return { adjuntarArchivo, actualizarFechaInicioDepreciacion }
 
     });

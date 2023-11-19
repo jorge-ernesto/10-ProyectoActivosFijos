@@ -45,7 +45,7 @@ define(['N'],
             let classification = recordContext.getValue('custpage_field_class');
             let numero_activo_alternativo = recordContext.getValue('custpage_field_numero_activo_alternativo');
             let nombre = recordContext.getValue('custpage_field_nombre');
-            let estado_proceso = recordContext.getValue('custpage_field_estado_proceso');
+            let estado_accion = recordContext.getValue('custpage_field_estado_accion');
 
             // Debug
             // console.log('debug', { assettype, subsidiary });
@@ -62,7 +62,7 @@ define(['N'],
                     _classification: classification,
                     _numero_activo_alternativo: numero_activo_alternativo,
                     _nombre: nombre,
-                    _estado_proceso: estado_proceso
+                    _estado_accion: estado_accion
                 }
             })
 

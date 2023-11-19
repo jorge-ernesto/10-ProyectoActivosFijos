@@ -8,7 +8,7 @@ define(['./Bio.Library.Helper', 'N'],
 
         const { log, search } = N;
 
-        function getDataActivosFijos(assettype = '', subsidiary = [''], classification = '', numero_activo_alternativo = '', nombre = '', estado_proceso = '', id_interno = '') {
+        function getDataActivosFijos(assettype = '', subsidiary = [''], classification = '', numero_activo_alternativo = '', nombre = '', estado_accion = '', id_interno = '') {
 
             // Declarar variables
             let resultTransaction = [];
@@ -86,12 +86,12 @@ define(['./Bio.Library.Helper', 'N'],
                 searchObject.filters.push(["name", "contains", nombre]);
             }
 
-            // Filtro de estado proceso
-            if (estado_proceso != '') {
+            // Filtro de estado accion
+            if (estado_accion != '') {
                 if (searchObject.filters.length > 0) {
                     searchObject.filters.push('AND');
                 }
-                searchObject.filters.push(["custrecord_bio_est_proc_con_act_fij", "anyof", estado_proceso]);
+                searchObject.filters.push(["custrecord_bio_est_acc_con_act_fij", "anyof", estado_accion]);
             }
 
             // Filtro de id interno
@@ -129,8 +129,8 @@ define(['./Bio.Library.Helper', 'N'],
                     let proveedor = row.getValue(columns[6]);
                     let fecha_compra = row.getValue(columns[7]);
                     let costo_original = row.getValue(columns[8]);
-                    let estado_id_interno = row.getValue(columns[9]);
-                    let estado = row.getText(columns[9]);
+                    let estado_activo_id_interno = row.getValue(columns[9]);
+                    let estado_activo = row.getText(columns[9]);
                     let centro_costo_id_interno = row.getValue(columns[10]);
                     let centro_costo = row.getText(columns[10]);
                     let numero_activo_alternativo = row.getValue(columns[11]);
@@ -153,7 +153,7 @@ define(['./Bio.Library.Helper', 'N'],
                         proveedor: proveedor,
                         fecha_compra: fecha_compra,
                         costo_original: costo_original,
-                        estado: { id: estado_id_interno, nombre: estado },
+                        estado_activo: { id: estado_activo_id_interno, nombre: estado_activo },
                         centro_costo: { id: centro_costo_id_interno, nombre: centro_costo },
                         numero_activo_alternativo: numero_activo_alternativo,
                         cantidad_factura: cantidad_factura,
@@ -235,39 +235,6 @@ define(['./Bio.Library.Helper', 'N'],
             return result;
         }
 
-        function getEstadoProcesoList() {
-
-            // Array donde guardaremos la informacion
-            let result = [];
-
-            // Crear search
-            let searchContext = search.create({
-                type: 'customlist_bio_lis_est_proc_con_act',
-                columns: ['internalid', 'name']
-            });
-
-            // Recorrer search
-            searchContext.run().each(node => {
-
-                // Obtener informacion
-                let columns = node.columns;
-                let id = node.getValue(columns[0]);
-                let name = node.getValue(columns[1]);
-
-                // Insertar informacion en array
-                result.push({
-                    id: id,
-                    name: name
-                })
-
-                // La funcion each debes indicarle si quieres que siga iterando o no
-                return true;
-            })
-
-            // Retornar array
-            return result;
-        }
-
         function getEstadoAccionList() {
 
             // Array donde guardaremos la informacion
@@ -301,6 +268,84 @@ define(['./Bio.Library.Helper', 'N'],
             return result;
         }
 
-        return { getDataActivosFijos, getAssetTypeList, getClassList, getEstadoProcesoList, getEstadoAccionList }
+        function getEstadoBienList() {
+
+            // Array donde guardaremos la informacion
+            let result = [];
+
+            // Crear search
+            let searchContext = search.create({
+                type: 'customlist_bio_lis_est_bien_con_act',
+                columns: [
+                    search.createColumn({
+                        name: "internalid",
+                        sort: search.Sort.ASC,
+                    }),
+                    'name'
+                ]
+            });
+
+            // Recorrer search
+            searchContext.run().each(node => {
+
+                // Obtener informacion
+                let columns = node.columns;
+                let id = node.getValue(columns[0]);
+                let name = node.getValue(columns[1]);
+
+                // Insertar informacion en array
+                result.push({
+                    id: id,
+                    name: name
+                })
+
+                // La funcion each debes indicarle si quieres que siga iterando o no
+                return true;
+            })
+
+            // Retornar array
+            return result;
+        }
+
+        function getMotivoBajaList() {
+
+            // Array donde guardaremos la informacion
+            let result = [];
+
+            // Crear search
+            let searchContext = search.create({
+                type: 'customlist_bio_lis_mot_baja_con_act',
+                columns: [
+                    search.createColumn({
+                        name: "internalid",
+                        sort: search.Sort.ASC,
+                    }),
+                    'name'
+                ]
+            });
+
+            // Recorrer search
+            searchContext.run().each(node => {
+
+                // Obtener informacion
+                let columns = node.columns;
+                let id = node.getValue(columns[0]);
+                let name = node.getValue(columns[1]);
+
+                // Insertar informacion en array
+                result.push({
+                    id: id,
+                    name: name
+                })
+
+                // La funcion each debes indicarle si quieres que siga iterando o no
+                return true;
+            })
+
+            // Retornar array
+            return result;
+        }
+
+        return { getDataActivosFijos, getAssetTypeList, getClassList, getEstadoAccionList, getEstadoBienList, getMotivoBajaList }
 
     });
