@@ -29,6 +29,7 @@ define(['N'],
             // document.getElementById('custpage_field_estado_proceso_popup_new')?.remove();
             // document.getElementById('custpage_field_estado_proceso_popup_link')?.remove();
 
+            // Agregar atributo a enlace "Orden de Compra"
             document.querySelector('#custpage_field_orden_compra_displayval a')?.setAttribute("target", "_blank");
         }
 
@@ -40,12 +41,12 @@ define(['N'],
             let recordContext = currentRecord.get();
 
             // Recuperar valores de los campos
-            let assettype = recordContext.getValue('custpage_field_assettype');
-            let subsidiary = recordContext.getValue('custpage_field_subsidiary');
-            let classification = recordContext.getValue('custpage_field_class');
-            let numero_activo_alternativo = recordContext.getValue('custpage_field_numero_activo_alternativo');
-            let nombre = recordContext.getValue('custpage_field_nombre');
-            let estado_accion = recordContext.getValue('custpage_field_estado_accion');
+            let assettype = recordContext.getValue('custpage_field_filter_assettype');
+            let subsidiary = recordContext.getValue('custpage_field_filter_subsidiary');
+            let classification = recordContext.getValue('custpage_field_filter_class');
+            let numero_activo_alternativo = recordContext.getValue('custpage_field_filter_numero_activo_alternativo');
+            let nombre = recordContext.getValue('custpage_field_filter_nombre');
+            let estado_accion = recordContext.getValue('custpage_field_filter_estado_accion');
 
             // Debug
             // console.log('debug', { assettype, subsidiary });

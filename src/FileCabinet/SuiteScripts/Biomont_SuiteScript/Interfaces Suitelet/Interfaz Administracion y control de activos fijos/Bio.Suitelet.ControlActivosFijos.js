@@ -6,7 +6,7 @@
  * @NApiVersion 2.1
  * @NScriptType Suitelet
  */
-define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Library.Helper',  'N'],
+define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Library.Helper', 'N'],
 
     function (objSearch, objWidget, objHelper, N) {
 
@@ -26,7 +26,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
             if (scriptContext.request.method == 'GET') {
 
                 // Crear formulario
-                let { form, fieldAssetType, fieldSubsidiary, fieldClass, fieldNumeroActivoAlternativo, fieldNombre, fieldEstadoAccion } = objWidget.createFormFilters();
+                let { form, fieldAssetType, fieldSubsidiary, fieldClass, fieldNumeroActivoAlternativo, fieldNombre, fieldEstadoAccion } = objWidget.createFormReport();
 
                 // Obtener datos por url
                 let button = scriptContext.request.parameters['_button'];

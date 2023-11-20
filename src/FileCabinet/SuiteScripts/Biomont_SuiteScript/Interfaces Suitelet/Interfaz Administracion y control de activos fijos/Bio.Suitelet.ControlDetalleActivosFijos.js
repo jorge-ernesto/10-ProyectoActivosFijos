@@ -41,8 +41,11 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 // Crear formulario
                 let {
                     form,
-                    // Activo fijo
+                    // IDs internos
                     fieldActivoFijoIdInterno,
+                    fieldEstadoAccionIdInterno,
+                    fieldClaseIdInterno,
+                    // Activo fijo
                     fieldEstadoAccion,
                     // Datos del proveedor
                     fieldProveedor,
@@ -88,31 +91,13 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     fieldNuevoUsuarioDepositario
                 } = objWidget.createFormDetail(dataActivoFijo);
 
-                /****************** Deshabilitar campos ******************/
-                // Deshabilitar los campos cuando este en estado "ALTA", "BAJA" o "TRANSFERENCIA"
-                if (Number(dataActivoFijo[0].estado_accion.id || 0) > 0) {
-                    // Datos del proveedor
-                    fieldNumeroGuia.updateDisplayType({ displayType: 'INLINE' });
-                    // Datos del bien
-                    fieldMarca.updateDisplayType({ displayType: 'INLINE' });
-                    fieldModelo.updateDisplayType({ displayType: 'INLINE' });
-                    fieldFechaActivacion.updateDisplayType({ displayType: 'INLINE' });
-                    fieldSerie.updateDisplayType({ displayType: 'INLINE' });
-                    fieldUsuarioDepositario.updateDisplayType({ displayType: 'INLINE' });
-                    fieldUbicacion.updateDisplayType({ displayType: 'INLINE' });
-                    fieldEstadoBien.updateDisplayType({ displayType: 'INLINE' });
-                    fieldDetalleUso.updateDisplayType({ displayType: 'INLINE' });
-                }
-
-                // Deshabilitar campo "Fecha de Activación" cuando el "Estado Activo" es diferente de "Nuevo"
-                if (!(dataActivoFijo[0].estado_activo.id == 6 || dataActivoFijo[0].estado_activo.id == 'Nuevo')) {
-                    // Datos del bien
-                    fieldFechaActivacion.updateDisplayType({ displayType: 'INLINE' });
-                }
-
                 /****************** Setear datos al formulario ******************/
-                // Activo fijo
+                // IDs Internos
                 fieldActivoFijoIdInterno.defaultValue = dataActivoFijo[0].activo_fijo.id_interno;
+                fieldEstadoAccionIdInterno.defaultValue = dataActivoFijo[0].estado_accion.id;
+                fieldClaseIdInterno.defaultValue = dataActivoFijo[0].centro_costo.id;
+
+                // Activo fijo
                 fieldEstadoAccion.defaultValue = dataActivoFijo[0].estado_accion.id; // Editable
 
                 // Datos del proveedor
@@ -142,7 +127,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
                 // Baja de activo
                 fieldMotivoBaja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_mot_baja_con_act_fij'); // Editable
-                fieldDetalleBaja.defaultValue = dataActivoFijo_.getValue('custrecord_det_baja_con_act_fij'); // Editable
+                fieldDetalleBaja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_det_baja_con_act_fij'); // Editable
                 fieldAnteriorClase_Baja.defaultValue = dataActivoFijo[0].centro_costo.nombre;
                 fieldUsuarioFirma_AnteriorClase_Baja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_usufir_baja_con_act'); // Editable
                 fieldFechaFirma_AnteriorClase_Baja.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fecfir_baja_con_act'); // Editable
@@ -157,13 +142,43 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 fieldNuevaUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_ubicacion_con_act_fij'); // Editable
                 fieldNuevoUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_usu_depo_con_act_fij'); // Editable
 
-                // Renderizar formulario
+                /***************** Habilitar inputs *****************/
+                // Obtener usuarios para enviar correo
+                let { usersId, usersId_ } = objSearch.getUsersByConf_CentroCosto_Empleado(dataActivoFijo[0].activo_fijo.id_interno);
+
+                // Obtener usuario logueado
+                let { user } = objHelper.getUser();
+
+                // Debug
+                // objHelper.error_log('debug', { usersId, usersId_, user });
+
+                // BAJA
+                if (dataActivoFijo[0].estado_accion.id == 2) {
+                    if (usersId.includes(Number(user.id))) { // Usuarios del Anterior Centro de Costo
+                        botonAnteriorClase_Baja.updateDisplayType({ displayType: 'NORMAL' });
+                    }
+                }
+
+                // TRANSFERENCIA
+                if (dataActivoFijo[0].estado_accion.id == 3) {
+                    if (usersId.includes(Number(user.id))) { // Usuarios del Anterior Centro de Costo
+                        botonAnteriorClase_Transferencia.updateDisplayType({ displayType: 'NORMAL' });
+                    }
+                    if (usersId_.includes(Number(user.id))) { // Usuarios del Nuevo Centro de Costo
+                        botonNuevaClase_Transferencia.updateDisplayType({ displayType: 'NORMAL' });
+                    }
+                }
+
+                /***************** Renderizar formulario *****************/
                 scriptContext.response.writePage(form);
             } else { // POST
                 /****************** Recibir parametros por POST ******************/
-                // Activo fijo
+                // IDs Internos
                 let activo_fijo_id_interno = scriptContext.request.parameters['custpage_field_activo_fijo_id_interno'];
+
+                // Activo fijo
                 let estado_accion = scriptContext.request.parameters['custpage_field_estado_accion'];
+                let estado_proceso = 2;
 
                 // Datos del proveedor
                 let numero_guia = scriptContext.request.parameters['custpage_field_numero_guia'];
@@ -194,42 +209,78 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 let nuevo_usuario_depositario = scriptContext.request.parameters['custpage_field_nuevo_usuario_depositario'];
 
                 /****************** Actualizar Activos Fijos ******************/
-                // Activo fijo
+                // IDs Internos
                 let activoFijoRecord = record.load({ type: 'customrecord_ncfar_asset', id: activo_fijo_id_interno });
+
+                // Activo fijo
                 activoFijoRecord.setValue('custrecord_bio_est_acc_con_act_fij', estado_accion);
-                activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', 2);
+                activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', estado_proceso);
 
-                // Datos del proveedor
-                activoFijoRecord.setValue('custrecord_bio_num_guia_con_act_fij', numero_guia);
+                // ALTA
+                if (estado_accion == 1) {
+                    // Datos del proveedor
+                    activoFijoRecord.setValue('custrecord_bio_num_guia_con_act_fij', numero_guia);
 
-                // Datos del bien
-                activoFijoRecord.setValue('custrecord_bio_marca_con_act_fij', marca);
-                activoFijoRecord.setValue('custrecord_bio_modelo_con_act_fij', modelo);
-                if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') { // Solo guardara "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
-                    // activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE
+                    // Datos del bien
+                    activoFijoRecord.setValue('custrecord_bio_marca_con_act_fij', marca);
+                    activoFijoRecord.setValue('custrecord_bio_modelo_con_act_fij', modelo);
+                    // if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE // Solo guarda "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
+                    // activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
+                    // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
+                    activoFijoRecord.setValue('custrecord_bio_ubicacion_con_act_fij', ubicacion);
+                    activoFijoRecord.setValue('custrecord_bio_est_bien_con_act_fij', estado_bien);
+                    activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
                 }
-                // activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
-                // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
-                activoFijoRecord.setValue('custrecord_bio_ubicacion_con_act_fij', ubicacion);
-                activoFijoRecord.setValue('custrecord_bio_est_bien_con_act_fij', estado_bien);
-                activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
 
-                // Baja de activo
-                activoFijoRecord.setValue('custrecord_bio_mot_baja_con_act_fij', motivo_baja);
-                activoFijoRecord.setValue('custrecord_det_baja_con_act_fij', detalle_baja);
-                activoFijoRecord.setValue('custrecord_bio_usufir_baja_con_act', usuariofirma_anteriorclase_baja);
-                activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', fechafirma_anteriorclase_baja);
+                // BAJA
+                if (estado_accion == 2) {
+                    // Baja de activo
+                    activoFijoRecord.setValue('custrecord_bio_mot_baja_con_act_fij', motivo_baja);
+                    activoFijoRecord.setValue('custrecord_bio_det_baja_con_act_fij', detalle_baja);
+                    activoFijoRecord.setValue('custrecord_bio_usufir_baja_con_act', usuariofirma_anteriorclase_baja);
+                    activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', fechafirma_anteriorclase_baja);
+                }
 
-                // Transferencia de activo
-                activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', usuariofirma_anteriorclase_transferencia);
-                activoFijoRecord.setValue('custrecord_bio_fecfirantcc_trans_con_act', fechafirma_anteriorclase_transferencia);
-                activoFijoRecord.setValue('custrecord_bio_nue_cc_con_act_fij', nuevaclase_transferencia);
-                activoFijoRecord.setValue('custrecord_bio_usufirnuecc_trans_con_act', usuariofirma_nuevaclase_transferencia);
-                activoFijoRecord.setValue('custrecord_bio_fecfirnuecc_trans_con_act', fechafirma_nuevaclase_transferencia);
-                activoFijoRecord.setValue('custrecord_bio_nue_ubicacion_con_act_fij', nueva_ubicacion);
-                activoFijoRecord.setValue('custrecord_bio_nue_usu_depo_con_act_fij', nuevo_usuario_depositario);
+                // TRANSFERENCIA
+                if (estado_accion == 3) {
+                    // Transferencia de activo
+                    activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', usuariofirma_anteriorclase_transferencia);
+                    activoFijoRecord.setValue('custrecord_bio_fecfirantcc_trans_con_act', fechafirma_anteriorclase_transferencia);
+                    activoFijoRecord.setValue('custrecord_bio_nue_cc_con_act_fij', nuevaclase_transferencia);
+                    activoFijoRecord.setValue('custrecord_bio_usufirnuecc_trans_con_act', usuariofirma_nuevaclase_transferencia);
+                    activoFijoRecord.setValue('custrecord_bio_fecfirnuecc_trans_con_act', fechafirma_nuevaclase_transferencia);
+                    activoFijoRecord.setValue('custrecord_bio_nue_ubicacion_con_act_fij', nueva_ubicacion);
+                    activoFijoRecord.setValue('custrecord_bio_nue_usu_depo_con_act_fij', nuevo_usuario_depositario);
+                }
 
-                activoFijoRecord.save();
+                let activoFijoId = activoFijoRecord.save();
+
+                /****************** Enviar email ******************/
+                // Validar que se guardo la informacion correctamente
+                if (activoFijoId) {
+
+                    // Obtener usuarios para enviar correo
+                    let { usersId, usersId_ } = objSearch.getUsersByConf_CentroCosto_Empleado(activo_fijo_id_interno);
+
+                    // Debug
+                    // objHelper.error_log('usersId', usersId);
+                    // objHelper.error_log('usersId_', usersId_);
+
+                    // BAJA
+                    if (estado_accion == 2) {
+                        if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo
+                            objHelper.sendEmailBaja(usersId, fixedAsset);
+                        }
+                    }
+
+                    // TRANSFERENCIA
+                    if (estado_accion == 3) {
+                        usersId = usersId.concat(usersId_);
+                        if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo o Nuevo Centro de Costo
+                            objHelper.sendEmailTransferencia(usersId, fixedAsset);
+                        }
+                    }
+                }
 
                 /****************** Redirigir a este mismo Suitelet (Redirigir a si mismo) ******************/
                 redirect.toSuitelet({

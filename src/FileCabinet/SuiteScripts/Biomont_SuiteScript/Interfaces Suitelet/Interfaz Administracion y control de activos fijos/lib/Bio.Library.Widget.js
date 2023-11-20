@@ -6,20 +6,18 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
     function (objSearch, objHelper, N) {
 
-        const { log, url } = N;
+        const { log } = N;
         const { serverWidget } = N.ui;
 
         const DATA = {
-            'clientScriptModulePath': './../Bio.Client.ControlActivosFijos.js'
+            'clientScriptModulePath': {
+                'suiteletReport': './../Bio.Client.ControlActivosFijos.js',
+                'suiteletDetail': './../Bio.Client.ControlDetalleActivosFijos.js',
+            }
         }
 
-        const scriptId = 'customscript_bio_sl_con_fixed_assets_det';
-        const deployId = 'customdeploy_bio_sl_con_fixed_assets_det';
-
-        /******************/
-
-        // Crear formulario
-        function createFormFilters() {
+        /****************** Suitelet Report ******************/
+        function createFormReport() {
             // Crear formulario
             let form = serverWidget.createForm({
                 title: `Administración y control de activos`,
@@ -27,7 +25,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             })
 
             // Asociar ClientScript al formulario
-            form.clientScriptModulePath = DATA.clientScriptModulePath;
+            form.clientScriptModulePath = DATA.clientScriptModulePath.suiteletReport;
 
             // Mostrar botones
             // form.addSubmitButton({
@@ -55,18 +53,18 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Tipos de activos
             let fieldAssetType = form.addField({
-                id: 'custpage_field_assettype',
+                id: 'custpage_field_filter_assettype',
                 label: 'Tipos de activos',
                 type: 'select',
                 // source: 'customrecord_ncfar_assettype',
                 container: 'custpage_group'
             });
             fieldAssetType.updateBreakType({ breakType: 'STARTCOL' })
-            setFieldFilters(fieldAssetType, 'fieldAssetType');
+            setFieldReport(fieldAssetType, 'fieldAssetType');
 
             // Subsidiarias
             let fieldSubsidiary = form.addField({
-                id: 'custpage_field_subsidiary',
+                id: 'custpage_field_filter_subsidiary',
                 label: 'Subsidiarias',
                 type: 'multiselect',
                 source: 'subsidiary',
@@ -76,18 +74,18 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Clases
             let fieldClass = form.addField({
-                id: 'custpage_field_class',
+                id: 'custpage_field_filter_class',
                 label: 'Clases',
                 type: 'select',
                 // source: 'classification',
                 container: 'custpage_group'
             });
             fieldClass.updateBreakType({ breakType: 'STARTCOL' })
-            setFieldFilters(fieldClass, 'fieldClass');
+            setFieldReport(fieldClass, 'fieldClass');
 
             // Número de activo alternativo
             let fieldNumeroActivoAlternativo = form.addField({
-                id: 'custpage_field_numero_activo_alternativo',
+                id: 'custpage_field_filter_numero_activo_alternativo',
                 label: 'Número de activo alternativo',
                 type: 'text',
                 container: 'custpage_group'
@@ -96,7 +94,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Nombre
             let fieldNombre = form.addField({
-                id: 'custpage_field_nombre',
+                id: 'custpage_field_filter_nombre',
                 label: 'Nombre',
                 type: 'text',
                 container: 'custpage_group'
@@ -105,7 +103,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Estado Acción
             let fieldEstadoAccion = form.addField({
-                id: 'custpage_field_estado_accion',
+                id: 'custpage_field_filter_estado_accion',
                 label: 'Estado Acción',
                 type: 'select',
                 // source: 'customlist_bio_lis_est_acc_con_act',
@@ -113,12 +111,12 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             })
             fieldEstadoAccion.updateBreakType({ breakType: 'STARTCOL' })
             fieldEstadoAccion.updateDisplaySize({ height: 60, width: 120 });
-            setFieldFilters(fieldEstadoAccion, 'fieldEstadoAccion');
+            setFieldReport(fieldEstadoAccion, 'fieldEstadoAccion');
 
             return { form, fieldAssetType, fieldSubsidiary, fieldClass, fieldNumeroActivoAlternativo, fieldNombre, fieldEstadoAccion }
         }
 
-        function setFieldFilters(field, name) {
+        function setFieldReport(field, name) {
             // Obtener datos por search
             let dataList = [];
 
@@ -152,7 +150,6 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             })
         }
 
-        // Crear sublista
         function createSublist(form, dataActivosFijos) {
             // Tipo de sublista
             sublistType = serverWidget.SublistType.LIST;
@@ -184,13 +181,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Setear los datos obtenidos a sublista
             dataActivosFijos.forEach((element, i) => {
-                let suitelet = url.resolveScript({
-                    deploymentId: deployId,
-                    scriptId: scriptId,
-                    params: {
-                        _id: element.activo_fijo.id_interno
-                    }
-                })
+                let { suitelet } = objHelper.getUrlSuiteletDetail(element.activo_fijo.id_interno);
 
                 if (element.activo_fijo.id) {
                     sublist.setSublistValue({ id: 'custpage_id', line: i, value: element.activo_fijo.id });
@@ -240,9 +231,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             });
         }
 
-        /******************/
-
-        // Crear formulario
+        /****************** Suitelet Detail ******************/
         function createFormDetail(dataActivoFijo) {
             // Crear formulario
             let form = serverWidget.createForm({
@@ -252,7 +241,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             })
 
             // Asociar ClientScript al formulario
-            form.clientScriptModulePath = DATA.clientScriptModulePath;
+            form.clientScriptModulePath = DATA.clientScriptModulePath.suiteletDetail;
 
             // Mostrar botones
             form.addSubmitButton({
@@ -279,9 +268,27 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                     id: 'custpage_field_activo_fijo_id_interno',
                     label: 'Activo Fijo ID interno',
                     type: 'text',
-                    container: 'custpage_group_datpro'
+                    container: 'custpage_group_actfij'
                 });
                 fieldActivoFijoIdInterno.updateDisplayType({ displayType: 'HIDDEN' });
+
+                // Estado Acción ID interno
+                var fieldEstadoAccionIdInterno = form.addField({
+                    id: 'custpage_field_estado_accion_id_interno',
+                    label: 'Estado Accion ID interno',
+                    type: 'text',
+                    container: 'custpage_group_actfij'
+                });
+                fieldEstadoAccionIdInterno.updateDisplayType({ displayType: 'HIDDEN' });
+
+                // Centro de Costo ID interno
+                var fieldClaseIdInterno = form.addField({
+                    id: 'custpage_field_clase_id_interno',
+                    label: 'Centro de Costo ID interno',
+                    type: 'text',
+                    container: 'custpage_group_actfij'
+                });
+                fieldClaseIdInterno.updateDisplayType({ displayType: 'HIDDEN' });
 
                 // Estado Acción
                 var fieldEstadoAccion = form.addField({
@@ -692,8 +699,8 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 fieldFechaFirma_NuevaClase_Transferencia.updateBreakType({ breakType: 'STARTROW' })
                 fieldFechaFirma_NuevaClase_Transferencia.updateDisplayType({ displayType: 'INLINE' });
 
-                 // Boton
-                 var botonNuevaClase_Transferencia = form.addField({
+                // Boton
+                var botonNuevaClase_Transferencia = form.addField({
                     id: 'custpage_boton_nuevaclase_transferencia',
                     label: 'Firmar',
                     type: 'inlinehtml',
@@ -726,8 +733,11 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             return {
                 form,
-                // Activo fijo
+                // IDs internos
                 fieldActivoFijoIdInterno,
+                fieldEstadoAccionIdInterno,
+                fieldClaseIdInterno,
+                // Activo fijo
                 fieldEstadoAccion,
                 // Datos del proveedor
                 fieldProveedor,
@@ -842,6 +852,6 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             button.defaultValue = html;
         }
 
-        return { createFormFilters, createSublist, createFormDetail }
+        return { createFormReport, createSublist, createFormDetail }
 
     });
