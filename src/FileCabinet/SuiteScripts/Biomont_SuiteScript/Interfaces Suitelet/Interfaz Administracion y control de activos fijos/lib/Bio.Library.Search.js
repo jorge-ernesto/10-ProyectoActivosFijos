@@ -8,7 +8,6 @@ define(['./Bio.Library.Helper', 'N'],
 
         const { log, search, record } = N;
 
-        // Activos Fijos
         function getDataActivosFijos(assettype = '', subsidiary = [''], classification = '', numero_activo_alternativo = '', nombre = '', estado_accion = '', id_interno = '') {
 
             // Declarar variables
@@ -170,8 +169,7 @@ define(['./Bio.Library.Helper', 'N'],
             return resultTransaction;
         }
 
-        // Configuración de Centro de Costo - Empleado
-        function getDataConf_CentroCosto_Empleado() {
+        function getDataConf_CentroCostoEmpleado() {
 
             // Declarar variables
             let resultTransaction = [];
@@ -182,7 +180,8 @@ define(['./Bio.Library.Helper', 'N'],
                 columns: [
                     search.createColumn({ name: "internalid", label: "ID INTERNO" }),
                     search.createColumn({ name: "custrecord_bio_centro_costo_confccemp", label: "Centro Costo" }),
-                    search.createColumn({ name: "custrecord_bio_empleado_confccemp", label: "Empleado" })
+                    search.createColumn({ name: "custrecord_bio_empleado_confccemp", label: "Empleado" }),
+                    search.createColumn({ name: "custrecord_bio_estado_accion_confccemp", label: "Estado Acción" })
                 ]
             };
 
@@ -199,16 +198,19 @@ define(['./Bio.Library.Helper', 'N'],
                 // Obtener informacion
                 let columns = node.columns;
                 let id_interno = node.getValue(columns[0]); // ID INTERNO
-                let centro_costo = node.getValue(columns[1]); // ORDEN DE TRABAJO
-                let centro_costo_nombre = node.getText(columns[1]); // ORDEN DE TRABAJO
-                let empleado = node.getValue(columns[2]); // LINEA
-                let empleado_nombre = node.getText(columns[2]); // LINEA
+                let centro_costo = node.getValue(columns[1]); // CENTRO DE COSTO
+                let centro_costo_nombre = node.getText(columns[1]); // CENTRO DE COSTO
+                let empleado = node.getValue(columns[2]); // EMPLEADO
+                let empleado_nombre = node.getText(columns[2]); // EMPLEADO
+                let estado_accion = node.getValue(columns[3]); // ESTADO ACCION
+                let estado_accion_nombre = node.getText(columns[3]); // ESTADO ACCION
 
                 // Insertar informacion en array
                 resultTransaction.push({
                     id_interno: id_interno,
                     centro_costo: { id: centro_costo, nombre: centro_costo_nombre },
-                    empleado: { id: empleado, nombre: empleado_nombre }
+                    empleado: { id: empleado, nombre: empleado_nombre },
+                    estado_accion: { id: estado_accion, nombre: estado_accion_nombre }
                 });
 
                 return true; // La funcion each debes indicarle si quieres que siga iterando o no
@@ -218,30 +220,57 @@ define(['./Bio.Library.Helper', 'N'],
             return resultTransaction;
         }
 
-        // Usuarios para enviar correo
-        function getUsersByConf_CentroCosto_Empleado(activo_fijo_id_interno) {
+        function getUsersByTipoAccionCentroCosto(activo_fijo_id_interno) {
 
             // Declarar variables
-            let usersId = [];
-            let usersId_ = [];
+            let usersBaja = {
+                usersId: [], // Anterior Centro de Costo
+                usersId_: [] // Nuevo Centro de Costo
+            }
+            let usersTransferencia = {
+                usersId: [], // Anterior Centro de Costo
+                usersId_: [] // Nuevo Centro de Costo
+            }
+
+            // Obtener datos por search
+            let dataConf_CentroCosto_Empleado = getDataConf_CentroCostoEmpleado();
 
             // Obtener datos por record
             let fixedAsset = record.load({ type: 'customrecord_ncfar_asset', id: activo_fijo_id_interno });
 
-            // Obtener datos por search
-            let dataConf_CentroCosto_Empleado = getDataConf_CentroCosto_Empleado();
-
-            // Obtener usuarios para enviar correo
+            // Recorrer configuracion Centro de Costo - Empleado - Tipo de Accion
             dataConf_CentroCosto_Empleado.forEach(element => {
-                if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
-                    usersId.push(Number(element.empleado.id)); // Usuarios del Anterior Centro de Costo
+
+                // * BAJA
+                if (element.estado_accion.id == 2) {
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
+                        usersBaja.usersId.push(Number(element.empleado.id));
+                    }
+
+                    // Usuarios del Nuevo Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
+                        usersBaja.usersId_.push(Number(element.empleado.id));
+                    }
                 }
-                if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
-                    usersId_.push(Number(element.empleado.id)); // Usuarios del Nuevo Centro de Costo
+
+                // * TRANSFERENCIA
+                if (element.estado_accion.id == 3) {
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
+                        usersTransferencia.usersId.push(Number(element.empleado.id));
+                    }
+
+                    // Usuarios del Nuevo Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
+                        usersTransferencia.usersId_.push(Number(element.empleado.id));
+                    }
                 }
             });
 
-            return { usersId, usersId_ }
+            return { usersBaja, usersTransferencia }
         }
 
         // Suitelet Report
@@ -423,6 +452,6 @@ define(['./Bio.Library.Helper', 'N'],
             return result;
         }
 
-        return { getDataActivosFijos, getDataConf_CentroCosto_Empleado, getUsersByConf_CentroCosto_Empleado, getAssetTypeList, getClassList, getEstadoAccionList, getEstadoBienList, getMotivoBajaList }
+        return { getDataActivosFijos, getUsersByTipoAccionCentroCosto, getAssetTypeList, getClassList, getEstadoAccionList, getEstadoBienList, getMotivoBajaList }
 
     });
