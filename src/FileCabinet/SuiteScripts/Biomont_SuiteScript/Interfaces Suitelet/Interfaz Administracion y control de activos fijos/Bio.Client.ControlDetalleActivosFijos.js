@@ -299,6 +299,13 @@ define(['N'],
                     if (!recordContext.getValue(fieldId)) {
                         errores[CONFIG_RECORD.baja.fields_mandatory[key]['id']] = CONFIG_RECORD.baja.fields_mandatory[key]['label'];
                     };
+
+                    // Validar que archivo termine en ".pdf", ".xls" o ".xlsx"
+                    if (fieldId == 'custpage_field_archivo_baja') {
+                        if (!esArchivoExtensionPermitida(recordContext, fieldId)) {
+                            errores[CONFIG_RECORD.baja.fields_mandatory[key]['id']] = CONFIG_RECORD.baja.fields_mandatory[key]['label'] + ' (El archivo debe tener extensión ".pdf", ".xls" o ".xlsx")';
+                        }
+                    }
                 }
             }
 
@@ -321,6 +328,18 @@ define(['N'],
                 return true;
             }
 
+            return false;
+        }
+
+        function esArchivoExtensionPermitida(recordContext, fieldId) {
+
+            // Obtener datos del archivo
+            let nombre_archivo = recordContext.getValue(fieldId);
+
+            // Validar que archivo termine en ".pdf", ".xls" o ".xlsx"
+            if ([".pdf", ".xls", ".xlsx"].some(extension => nombre_archivo.toLowerCase().endsWith(extension))) {
+                return true;
+            }
             return false;
         }
 

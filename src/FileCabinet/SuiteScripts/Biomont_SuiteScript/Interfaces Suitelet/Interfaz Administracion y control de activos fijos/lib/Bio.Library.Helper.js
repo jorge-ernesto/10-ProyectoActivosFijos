@@ -79,6 +79,24 @@ define(['N'],
             });
         }
 
-        return { getUser, error_log, email_log, getUrlSuiteletDetail, sendEmailBaja, sendEmailTransferencia }
+        function getNameFile(nameFile) {
+
+            // Obtener extensión del archivo
+            const extension = nameFile.slice(nameFile.lastIndexOf('.'));
+
+            // Obtener time stamp
+            const timeStamp = getTimeStamp();
+
+            // Obtener nuevo nombre
+            nameFile = nameFile.replace(extension, `_${timeStamp}${extension}`);
+            return nameFile;
+        }
+
+        function getTimeStamp() {
+            const now = new Date();
+            return `${now.toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '_')}`;
+        }
+
+        return { getUser, error_log, email_log, getUrlSuiteletDetail, sendEmailBaja, sendEmailTransferencia, getNameFile }
 
     });

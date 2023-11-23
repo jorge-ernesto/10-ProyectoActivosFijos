@@ -252,9 +252,9 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     // Datos del bien
                     activoFijoRecord.setValue('custrecord_bio_marca_con_act_fij', marca);
                     activoFijoRecord.setValue('custrecord_bio_modelo_con_act_fij', modelo);
-                    // if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE // Solo guarda "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
-                    // activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
-                    // activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
+                    if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE // Solo guarda "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
+                    activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
+                    activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
                     activoFijoRecord.setValue('custrecord_bio_ubicacion_con_act_fij', ubicacion);
                     activoFijoRecord.setValue('custrecord_bio_est_bien_con_act_fij', estado_bien);
                     activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
@@ -308,6 +308,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
                                 // Guardar archivo
                                 archivo_baja.folder = 46304; // Carpeta "BAJA DE ACTIVOS FIJOS"
+                                archivo_baja.name = objHelper.getNameFile(nombre_archivo);
                                 let archivo_baja_id = archivo_baja.save();
 
                                 // Adjuntar archivo al activo fijo

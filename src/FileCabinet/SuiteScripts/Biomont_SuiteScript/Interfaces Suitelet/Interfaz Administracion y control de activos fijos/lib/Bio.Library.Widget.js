@@ -104,7 +104,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             // Estado Acción
             let fieldEstadoAccion = form.addField({
                 id: 'custpage_field_filter_estado_accion',
-                label: 'Estado Acción',
+                label: 'Estado',
                 type: 'select',
                 // source: 'customlist_bio_lis_est_acc_con_act',
                 container: 'custpage_group'
@@ -132,7 +132,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             if (name == 'fieldEstadoAccion') {
                 field.addSelectOption({
                     value: '@NONE@',
-                    text: 'NO ASIGNADO'
+                    text: 'PENDIENTE'
                 });
             } else {
                 field.addSelectOption({
