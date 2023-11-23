@@ -169,29 +169,35 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 fieldNuevaUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_ubicacion_con_act_fij'); // Editable
                 fieldNuevoUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_bio_nue_usu_depo_con_act_fij'); // Editable
 
-                /***************** Habilitar inputs *****************/
+                /***************** Habilitar buttons *****************/
                 // Obtener usuarios para enviar correo
-                let { usersId, usersId_ } = objSearch.getUsersByConf_CentroCosto_Empleado(dataActivoFijo[0].activo_fijo.id_interno);
+                let { usersBaja, usersTransferencia } = objSearch.getUsersByTipoAccionCentroCosto(dataActivoFijo[0].activo_fijo.id_interno);
 
                 // Obtener usuario logueado
                 let { user } = objHelper.getUser();
 
                 // Debug
-                // objHelper.error_log('debug', { usersId, usersId_, user });
+                // objHelper.error_log('debug', { usersBaja, usersTransferencia, user });
 
-                // BAJA
+                // * BAJA
                 if (dataActivoFijo[0].estado_accion.id == 2) {
-                    if (usersId.includes(Number(user.id))) { // Usuarios del Anterior Centro de Costo
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (usersBaja.usersId.includes(Number(user.id))) {
                         botonAnteriorClase_Baja.updateDisplayType({ displayType: 'NORMAL' });
                     }
                 }
 
-                // TRANSFERENCIA
+                // * TRANSFERENCIA
                 if (dataActivoFijo[0].estado_accion.id == 3) {
-                    if (usersId.includes(Number(user.id))) { // Usuarios del Anterior Centro de Costo
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (usersTransferencia.usersId.includes(Number(user.id))) {
                         botonAnteriorClase_Transferencia.updateDisplayType({ displayType: 'NORMAL' });
                     }
-                    if (usersId_.includes(Number(user.id))) { // Usuarios del Nuevo Centro de Costo
+
+                    // Usuarios del Nuevo Centro de Costo
+                    if (usersTransferencia.usersId_.includes(Number(user.id))) {
                         botonNuevaClase_Transferencia.updateDisplayType({ displayType: 'NORMAL' });
                     }
                 }
@@ -244,7 +250,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 activoFijoRecord.setValue('custrecord_bio_est_acc_con_act_fij', estado_accion);
                 activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', estado_proceso);
 
-                // ALTA
+                // * ALTA
                 if (estado_accion == 1) {
                     // Datos del proveedor
                     activoFijoRecord.setValue('custrecord_bio_num_guia_con_act_fij', numero_guia);
@@ -260,7 +266,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     activoFijoRecord.setValue('custrecord_bio_det_uso_con_act_fij', detalle_uso);
                 }
 
-                // BAJA
+                // * BAJA
                 if (estado_accion == 2) {
                     // Baja de activo
                     activoFijoRecord.setValue('custrecord_bio_mot_baja_con_act_fij', motivo_baja);
@@ -269,7 +275,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', fechafirma_anteriorclase_baja);
                 }
 
-                // TRANSFERENCIA
+                // * TRANSFERENCIA
                 if (estado_accion == 3) {
                     // Transferencia de activo
                     activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', usuariofirma_anteriorclase_transferencia);
@@ -334,24 +340,29 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 if (activoFijoId) {
 
                     // Obtener usuarios para enviar correo
-                    let { usersId, usersId_ } = objSearch.getUsersByConf_CentroCosto_Empleado(activo_fijo_id_interno);
+                    let { usersBaja, usersTransferencia } = objSearch.getUsersByTipoAccionCentroCosto(activo_fijo_id_interno);
 
                     // Debug
-                    // objHelper.error_log('debug', { usersId, usersId_ });
+                    // objHelper.error_log('debug', { usersBaja, usersTransferencia });
 
-                    // BAJA
+                    // * BAJA
                     if (estado_accion == 2) {
-                        if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo
-                            objHelper.sendEmailBaja(usersId, activoFijoRecord);
+
+                        // Se encontraron usuarios del Anterior Centro de Costo
+                        if (Object.keys(usersBaja.usersId).length > 0) {
+                            objHelper.sendEmailBaja(usersBaja.usersId, activoFijoRecord);
                             _status += '|SEND_EMAIL_BAJA'
                         }
                     }
 
-                    // TRANSFERENCIA
+                    // * TRANSFERENCIA
                     if (estado_accion == 3) {
-                        usersId = usersId.concat(usersId_);
-                        if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo o Nuevo Centro de Costo
-                            objHelper.sendEmailTransferencia(usersId, activoFijoRecord);
+
+                        usersTransferencia.usersId = usersTransferencia.usersId.concat(usersTransferencia.usersId_);
+
+                        // Se encontraron usuarios del Anterior Centro de Costo o Nuevo Centro de Costo
+                        if (Object.keys(usersTransferencia.usersId).length > 0) {
+                            objHelper.sendEmailTransferencia(usersTransferencia.usersId, activoFijoRecord);
                             _status += '|SEND_EMAIL_TRANSFERENCIA'
                         }
                     }
