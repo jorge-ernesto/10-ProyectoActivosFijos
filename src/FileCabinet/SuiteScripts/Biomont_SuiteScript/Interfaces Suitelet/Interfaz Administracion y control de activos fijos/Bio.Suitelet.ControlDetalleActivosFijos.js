@@ -11,6 +11,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
     function (objSearch, objWidget, objHelper, N) {
 
         const { log, record, redirect, runtime } = N;
+        const { message } = N.ui;
 
         /******************/
 
@@ -27,6 +28,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
                 // Obtener datos por url
                 let id = scriptContext.request.parameters['_id'];
+                let status = scriptContext.request.parameters['_status'];
+                status = status?.split('|'); // 'SAVE|SEND_EMAIL_BAJA|SEND_EMAIL_TRANSFERENCIA' -> ['SAVE','SEND_EMAIL_BAJA','SEND_EMAIL_TRANSFERENCIA']
 
                 // Obtener datos por search
                 let dataActivoFijo = objSearch.getDataActivosFijos([''], [''], '', '', '', '', id);
@@ -91,6 +94,30 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     fieldNuevoUsuarioDepositario
                 } = objWidget.createFormDetail(dataActivoFijo);
 
+                if (status?.includes('SAVE')) {
+                    form.addPageInitMessage({
+                        type: message.Type.CONFIRMATION,
+                        message: `Se guardo el registro correctamente`,
+                        duration: 25000 // 25 segundos
+                    });
+                }
+
+                if (status?.includes('SEND_EMAIL_BAJA') || status?.includes('SEND_EMAIL_TRANSFERENCIA')) {
+                    form.addPageInitMessage({
+                        type: message.Type.INFORMATION,
+                        message: `Se notifico a los jefes de area por email`,
+                        duration: 25000 // 25 segundos
+                    });
+                }
+
+                if (status?.includes('PROCESS_SIGNATURE')) {
+                    form.addPageInitMessage({
+                        type: message.Type.INFORMATION,
+                        message: `Se firmo correctamente`,
+                        duration: 25000 // 25 segundos
+                    });
+                }
+
                 /****************** Setear datos al formulario ******************/
                 // IDs Internos
                 fieldActivoFijoIdInterno.defaultValue = dataActivoFijo[0].activo_fijo.id_interno;
@@ -122,7 +149,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 fieldSerie.defaultValue = dataActivoFijo_.getValue('custrecord_assetserialno'); // Editable // INFORMACION CAMPO EXISTENTE
                 fieldUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_assetcaretaker'); // Editable // INFORMACION CAMPO EXISTENTE
                 fieldUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_ubicacion_con_act_fij'); // Editable
-                fieldEstadoBien.defaultValue = dataActivoFijo_.getValue('custrecord_bio_estado_con_act_fij'); // Editable
+                fieldEstadoBien.defaultValue = dataActivoFijo_.getValue('custrecord_bio_est_bien_con_act_fij'); // Editable
                 fieldDetalleUso.defaultValue = dataActivoFijo_.getValue('custrecord_bio_det_uso_con_act_fij'); // Editable
 
                 // Baja de activo
@@ -198,6 +225,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 let detalle_baja = scriptContext.request.parameters['custpage_field_detalle_baja'];
                 let usuariofirma_anteriorclase_baja = scriptContext.request.parameters['custpage_field_usuariofirma_anteriorclase_baja'];
                 let fechafirma_anteriorclase_baja = scriptContext.request.parameters['custpage_field_fechafirma_anteriorclase_baja'];
+                let archivo_baja = scriptContext.request.files.custpage_field_archivo_baja;
 
                 // Transferencia de activo
                 let usuariofirma_anteriorclase_transferencia = scriptContext.request.parameters['custpage_field_usuariofirma_anteriorclase_transferencia'];
@@ -254,6 +282,51 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 }
 
                 let activoFijoId = activoFijoRecord.save();
+                let _status = '';
+
+                if (activoFijoId) {
+                    _status = 'SAVE';
+                }
+
+                /****************** Subir archivo ******************/
+                // Validar que se guardo la informacion correctamente
+                if (activoFijoId) {
+                    if (archivo_baja) {
+
+                        // Obtener datos del archivo
+                        let tipo_archivo = archivo_baja.fileType;
+                        let nombre_archivo = archivo_baja.name;
+
+                        // Debug
+                        // objHelper.error_log('debug', { tipo_archivo, nombre_archivo });
+
+                        // Validar tipo de archivo
+                        if (tipo_archivo == 'PDF' || tipo_archivo == 'MISCBINARY') {
+
+                            // Validar que archivo termine en ".pdf", ".xls" o ".xlsx"
+                            if ([".pdf", ".xls", ".xlsx"].some(extension => nombre_archivo.toLowerCase().endsWith(extension))) {
+
+                                // Guardar archivo
+                                archivo_baja.folder = 46304; // Carpeta "BAJA DE ACTIVOS FIJOS"
+                                let archivo_baja_id = archivo_baja.save();
+
+                                // Adjuntar archivo al activo fijo
+                                var id = record.attach({
+                                    record: {
+                                        type: 'file',
+                                        id: archivo_baja_id
+                                    },
+                                    to: {
+                                        type: 'customrecord_ncfar_asset',
+                                        id: activo_fijo_id_interno
+                                    }
+                                });
+
+                                _status += '|SAVE_FILE';
+                            }
+                        }
+                    }
+                }
 
                 /****************** Enviar email ******************/
                 // Validar que se guardo la informacion correctamente
@@ -263,13 +336,13 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     let { usersId, usersId_ } = objSearch.getUsersByConf_CentroCosto_Empleado(activo_fijo_id_interno);
 
                     // Debug
-                    // objHelper.error_log('usersId', usersId);
-                    // objHelper.error_log('usersId_', usersId_);
+                    // objHelper.error_log('debug', { usersId, usersId_ });
 
                     // BAJA
                     if (estado_accion == 2) {
                         if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo
-                            objHelper.sendEmailBaja(usersId, fixedAsset);
+                            objHelper.sendEmailBaja(usersId, activoFijoRecord);
+                            _status += '|SEND_EMAIL_BAJA'
                         }
                     }
 
@@ -277,7 +350,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     if (estado_accion == 3) {
                         usersId = usersId.concat(usersId_);
                         if (Object.keys(usersId).length > 0) { // Se encontraron usuarios del Anterior Centro de Costo o Nuevo Centro de Costo
-                            objHelper.sendEmailTransferencia(usersId, fixedAsset);
+                            objHelper.sendEmailTransferencia(usersId, activoFijoRecord);
+                            _status += '|SEND_EMAIL_TRANSFERENCIA'
                         }
                     }
                 }
@@ -287,7 +361,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     scriptId: runtime.getCurrentScript().id,
                     deploymentId: runtime.getCurrentScript().deploymentId,
                     parameters: {
-                        '_id': activo_fijo_id_interno
+                        '_id': activo_fijo_id_interno,
+                        '_status': _status
                     }
                 });
             }

@@ -7,6 +7,46 @@ define(['N'],
 
     function (N) {
 
+        const { message } = N.ui;
+
+        const CONFIG_RECORD = {
+            baja: {
+                fields_mandatory: {
+                    subsidiary: {
+                        id: 'custpage_field_motivo_baja',
+                        label: 'Motivo de baja'
+                    },
+                    start: {
+                        id: 'custpage_field_detalle_baja',
+                        label: 'Detalle de baja'
+                    },
+                    end: {
+                        id: 'custpage_field_archivo_baja',
+                        label: 'Archivo de baja'
+                    }
+                }
+            },
+            transferencia: {
+                fields_mandatory: {
+                    subsidiary: {
+                        id: 'custpage_field_nuevaclase_transferencia',
+                        label: 'Nuevo Centro de Costo'
+                    },
+                    start: {
+                        id: 'custpage_field_nueva_ubicacion',
+                        label: 'Nueva Ubicación'
+                    },
+                    end: {
+                        id: 'custpage_field_nuevo_usuario_depositario',
+                        label: 'Nuevo Usuario (Depositario)'
+                    }
+                }
+            }
+
+        }
+
+        /******************/
+
         /**
          * Function to be executed after page is initialized.
          *
@@ -45,6 +85,63 @@ define(['N'],
             // Esto se ejecuta cuando se hacen cambios en el combo estado accion
             if (scriptContext.fieldId == 'custpage_field_estado_accion') {
                 habilitarCamposPorEstadoAccion(recordContext);
+            }
+        }
+
+        function habilitarCamposPorEstadoAccion(recordContext) {
+
+            // Ocultar todos los campos
+            deshabilitarTodosCampos(recordContext);
+
+            // Obtener combo "Estado Accion"
+            let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
+
+            // Obtener field hidden "Estado Accion Id Interno"
+            let fieldHiddenEstadoAccionIdInterno = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
+
+            // Debug
+            console.log('comboEstadoAccion', comboEstadoAccion);
+            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
+
+            /**
+            * Funcionalidad para habilitar y deshabilitar campos
+            * Estado Acción - Values.
+                - Alta: 1
+                - Baja: 2
+                - Transferencia: 3
+            */
+
+            // Si se selecciona combo "Alta"
+            if (comboEstadoAccion == 1) {
+
+                // No se hizo una "Alta", "Baja" o "Transferencia" anteriormente
+                if (!(fieldHiddenEstadoAccionIdInterno == 1 || fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3)) {
+
+                    // Habilitar campos "Alta"
+                    habilitarCamposAlta(recordContext);
+                }
+            }
+
+            // Si se selecciona combo "Baja"
+            if (comboEstadoAccion == 2) {
+
+                // No se hizo una "Baja" anteriormente
+                if (!(fieldHiddenEstadoAccionIdInterno == 2)) {
+
+                    // Habilitar campos "Transferencia"
+                    habilitarCamposBaja(recordContext);
+                }
+            }
+
+            // Si se selecciona combo "Transferencia"
+            if (comboEstadoAccion == 3) {
+
+                // No se hizo una "Baja" o "Transferencia"
+                if (!(fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3)) {
+
+                    // Habilitar campos "Transferencia"
+                    habilitarCamposTransferencia(recordContext);
+                }
             }
         }
 
@@ -125,10 +222,7 @@ define(['N'],
             recordContext.getField('custpage_field_nuevo_usuario_depositario').isDisabled = false;
         }
 
-        function habilitarCamposPorEstadoAccion(recordContext) {
-
-            // Ocultar todos los campos
-            deshabilitarTodosCampos(recordContext);
+        function validarComboEstadoAccion(recordContext) {
 
             // Obtener combo "Estado Accion"
             let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
@@ -138,53 +232,131 @@ define(['N'],
 
             // Debug
             console.log('comboEstadoAccion', comboEstadoAccion);
-            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno)
-
-            /**
-            * Funcionalidad para habilitar y deshabilitar campos
-            * Estado Acción - Values.
-                - Alta: 1
-                - Baja: 2
-                - Transferencia: 3
-            */
+            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
 
             // Si se selecciona combo "Alta"
             if (comboEstadoAccion == 1) {
 
-                // No se hizo una "Alta", "Baja" o "Transferencia" anteriormente
-                if (!(fieldHiddenEstadoAccionIdInterno == 1 || fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3)) {
+                // Se hizo una "Alta", "Baja" o "Transferencia" anteriormente
+                if (fieldHiddenEstadoAccionIdInterno == 1 || fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3) {
 
-                    // Habilitar campos "Alta"
-                    habilitarCamposAlta(recordContext);
+                    detenerGuardar('No se puede guardar el Alta. Se hizo una "Alta", "Baja" o "Transferencia" anteriormente');
+                    return true;
                 }
             }
 
             // Si se selecciona combo "Baja"
             if (comboEstadoAccion == 2) {
 
-                // No se hizo una "Baja" anteriormente
-                if (!(fieldHiddenEstadoAccionIdInterno == 2)) {
+                // Se hizo una "Baja" anteriormente
+                if (fieldHiddenEstadoAccionIdInterno == 2) {
 
-                    // Habilitar campos "Transferencia"
-                    habilitarCamposBaja(recordContext);
+                    detenerGuardar('No se puede guardar la Baja. Se hizo una "Baja" anteriormente');
+                    return true;
                 }
             }
 
             // Si se selecciona combo "Transferencia"
             if (comboEstadoAccion == 3) {
 
-                // No se hizo una "Baja" o "Transferencia"
-                if (!(fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3)) {
+                // Se hizo una "Baja" o "Transferencia" anteriormente
+                if (fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3) {
 
-                    // Habilitar campos "Transferencia"
-                    habilitarCamposTransferencia(recordContext);
+                    detenerGuardar('No se puede guardar la Transferencia. Se hizo una "Baja" o "Transferencia" anteriormente');
+                    return true;
                 }
             }
+
+            return false;
+        }
+
+        function detenerGuardar(mensajeValidacion) {
+
+            // Mostrar mensaje de validación al usuario
+            var messageValidation = message.create({
+                title: "Error",
+                message: `${mensajeValidacion}`,
+                type: message.Type.ERROR
+            });
+            messageValidation.show({
+                duration: 5000 // Duración del mensaje en milisegundos (5 segundos en este ejemplo)
+            });
+        }
+
+        function validarCamposObligatorios(recordContext) {
+
+            // Declarar variables
+            let mensaje = 'Introduzca valores para:';
+            let errores = {};
+
+            // Obtener combo "Estado Accion"
+            let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
+
+            // BAJA
+            if (comboEstadoAccion == 2) {
+                for (var key in CONFIG_RECORD.baja.fields_mandatory) {
+                    let fieldId = CONFIG_RECORD.baja.fields_mandatory[key]['id'];
+                    if (!recordContext.getValue(fieldId)) {
+                        errores[CONFIG_RECORD.baja.fields_mandatory[key]['id']] = CONFIG_RECORD.baja.fields_mandatory[key]['label'];
+                    };
+                }
+            }
+
+            // TRANSFERENCIA
+            if (comboEstadoAccion == 3) {
+                for (var key in CONFIG_RECORD.transferencia.fields_mandatory) {
+                    let fieldId = CONFIG_RECORD.transferencia.fields_mandatory[key]['id'];
+                    if (!recordContext.getValue(fieldId)) {
+                        errores[CONFIG_RECORD.transferencia.fields_mandatory[key]['id']] = CONFIG_RECORD.transferencia.fields_mandatory[key]['label'];
+                    };
+                }
+            }
+
+            if (Object.keys(errores).length > 0) {
+                for (let error in errores) {
+                    mensaje += ` ${errores[error]},`
+                }
+                mensaje = mensaje.substring(0, mensaje.length - 1);
+                alert(mensaje);
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Validation function to be executed when record is saved.
+         *
+         * @param {Object} scriptContext
+         * @param {Record} scriptContext.currentRecord - Current form record
+         * @returns {boolean} Return true if record is valid
+         *
+         * @since 2015.2
+         */
+        function saveRecord(scriptContext) {
+
+            // Obtener el currentRecord
+            let recordContext = scriptContext.currentRecord;
+
+            /****************** Validar combo "Estado Accion" ******************/
+            // Validar combo "Estado Accion"
+            if (validarComboEstadoAccion(recordContext)) {
+                return false;
+            }
+
+            /****************** Validar campos obligatorios ******************/
+            // Validar campos obligatorios
+            if (validarCamposObligatorios(recordContext)) {
+                return false;
+            }
+
+            return true;
         }
 
         return {
             pageInit: pageInit,
             fieldChanged: fieldChanged,
+            saveRecord: saveRecord
         };
 
     });

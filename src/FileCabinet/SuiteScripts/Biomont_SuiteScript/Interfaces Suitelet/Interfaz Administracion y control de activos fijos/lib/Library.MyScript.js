@@ -1,12 +1,4 @@
-/*
-Probar script en la consola de "Set Preferences"
-
-> require(['SuiteScripts/Biomont_SuiteScript/Interfaces Suitelet/Interfaz Administracion y control de activos fijos/lib/Library.MyScript.js'], function(lib){
-    Lib = lib;
-})
-> Lib
-> Lib.adjuntarArchivo()
-*/
+// SuiteScript en el navegador
 
 /**
  * @NApiVersion 2.1
@@ -40,6 +32,23 @@ define(['N'],
             activoFijoRecord.setText('custrecord_assetdeprstartdate', '01/08/2023'); // 01/08/2023 - 31/07/2043
             activoFijoRecord.save();
         }
+
+        /******************/
+
+        /* Forma principal
+        require(['N/currentRecord'], function (currentRecord) {
+            recordContext = currentRecord.get();
+        });
+        recordContext.getValue('quantity');
+        */
+
+        /* Otra forma
+        require(['N/currentRecord'], function (currentRecord) {
+            let recordContext = currentRecord.get();
+            let data = recordContext.getValue('quantity');
+            console.log(data);
+        });
+        */
 
         return { adjuntarArchivo, actualizarFechaInicioDepreciacion }
 

@@ -43,7 +43,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     // objHelper.error_log('debug', { assettype, subsidiary });
 
                     // Setear datos al formulario
-                    subsidiary = subsidiary.split('|'); // 1|2 -> ['1','2']
+                    subsidiary = subsidiary.split('|'); // '1|2' -> ['1','2']
                     fieldAssetType.defaultValue = assettype;
                     fieldSubsidiary.defaultValue = subsidiary;
                     fieldClass.defaultValue = classification;

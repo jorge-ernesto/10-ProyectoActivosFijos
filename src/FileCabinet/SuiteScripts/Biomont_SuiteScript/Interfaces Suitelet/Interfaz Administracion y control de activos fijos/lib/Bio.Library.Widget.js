@@ -582,7 +582,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 var fieldFechaFirma_AnteriorClase_Baja = form.addField({
                     id: 'custpage_field_fechafirma_anteriorclase_baja',
                     label: 'Fecha firma',
-                    type: 'date',
+                    type: 'text',
                     container: 'custpage_group_bajact'
                 });
                 fieldFechaFirma_AnteriorClase_Baja.updateBreakType({ breakType: 'STARTROW' })
@@ -649,7 +649,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 var fieldFechaFirma_AnteriorClase_Transferencia = form.addField({
                     id: 'custpage_field_fechafirma_anteriorclase_transferencia',
                     label: 'Fecha firma',
-                    type: 'date',
+                    type: 'text',
                     container: 'custpage_group_traact'
                 });
                 fieldFechaFirma_AnteriorClase_Transferencia.updateBreakType({ breakType: 'STARTROW' })
@@ -693,7 +693,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 var fieldFechaFirma_NuevaClase_Transferencia = form.addField({
                     id: 'custpage_field_fechafirma_nuevaclase_transferencia',
                     label: 'Fecha firma',
-                    type: 'date',
+                    type: 'text',
                     container: 'custpage_group_traact'
                 });
                 fieldFechaFirma_NuevaClase_Transferencia.updateBreakType({ breakType: 'STARTROW' })
@@ -808,45 +808,125 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
         function setButtonDetail(button, name) {
             let html = '';
 
+            let htmlObtenerData = `
+                // Obtener el id interno del activo fijo
+                let recordContext = currentRecord.get();
+                let assetId = recordContext.getValue('custpage_field_activo_fijo_id_interno');
+
+                // Obtener el record del activo fijo
+                let activoFijoRecord = record.load({ type: 'customrecord_ncfar_asset', id: assetId });
+
+                // Obtener el usuario logueado
+                let user = runtime.getCurrentUser();
+
+                // Obtener fecha y hora actual
+                var now = new Date();
+                var datetime = format.format({ value: now, type: format.Type.DATETIME });
+            `;
+
+            let htmlActualizarPagina = `
+                let activoFijoId = activoFijoRecord.save();
+
+                // Debug
+                console.log(activoFijoId);
+
+                // Obtener url del Suitelet
+                const scriptId = 'customscript_bio_sl_con_fixed_assets_det';
+                const deployId = 'customdeploy_bio_sl_con_fixed_assets_det';
+                let suitelet = url.resolveScript({
+                    deploymentId: deployId,
+                    scriptId: scriptId,
+                    params: {
+                        _id: assetId,
+                        _status: 'PROCESS_SIGNATURE'
+                    }
+                })
+
+                // Evitar que aparezca el mensaje 'Estas seguro que deseas salir de la pantalla'
+                setWindowChanged(window, false);
+
+                // Redirigir a la url
+                window.location.href = suitelet;
+            `;
+
             if (name == 'botonAnteriorClase_Baja') {
                 html = `
                     <script>
-                        function firmarAnteriorClase_Baja(){
-                            require(['N/currentRecord'], function(currentRecord) {
-                                console.log('Firma Anterior Clase Baja');
-                                console.log(currentRecord.get());
-                            })
+                        function firmarAnteriorClase_Baja() {
+                            if (confirm('¿Estás seguro de que quieres firmar?')) {
+
+                                require(['N/currentRecord', 'N/record', 'N/runtime', 'N/format', 'N/url'], function (currentRecord, record, runtime, format, url) {
+                                    console.log('Firma Anterior Clase Baja');
+                                    console.log(currentRecord.get());
+
+                                    // Obtener data
+                                    ${htmlObtenerData}
+
+                                    // Setear datos al record
+                                    activoFijoRecord.setValue('custrecord_bio_usufir_baja_con_act', user.id);
+                                    activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', datetime);
+
+                                    // Actualizar pagina
+                                    ${htmlActualizarPagina}
+                                })
+                            }
                         }
                     </script>
 
                     <button type="button" class="pgBntG pgBntB" style="padding: 3px 12px;" onClick="firmarAnteriorClase_Baja()">Firmar</button>
-                    `
+                `;
             } else if (name == 'botonAnteriorClase_Transferencia') {
                 html = `
                     <script>
-                        function firmarAnteriorClase_Transferencia(){
-                            require(['N/currentRecord'], function(currentRecord) {
-                                console.log('Firma Anterior Clase Transferencia');
-                                console.log(currentRecord.get());
-                            })
+                        function firmarAnteriorClase_Transferencia() {
+                            if (confirm('¿Estás seguro de que quieres firmar?')) {
+
+                                require(['N/currentRecord', 'N/record', 'N/runtime', 'N/format', 'N/url'], function (currentRecord, record, runtime, format, url) {
+                                    console.log('Firma Anterior Clase Transferencia');
+                                    console.log(currentRecord.get());
+
+                                    // Obtener data
+                                    ${htmlObtenerData}
+
+                                    // Setear datos al record
+                                    activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', user.id);
+                                    activoFijoRecord.setValue('custrecord_bio_fecfirantcc_trans_con_act', datetime);
+
+                                    // Actualizar pagina
+                                    ${htmlActualizarPagina}
+                                })
+                            }
                         }
                     </script>
 
                     <button type="button" class="pgBntG pgBntB" style="padding: 3px 12px;" onClick="firmarAnteriorClase_Transferencia()">Firmar</button>
-                    `
+                `;
             } else if (name == 'botonNuevaClase_Transferencia') {
                 html = `
                     <script>
-                        function firmarNuevaClase_Transferencia(){
-                            require(['N/currentRecord'], function(currentRecord) {
-                                console.log('Firma Nueva Clase Transferencia');
-                                console.log(currentRecord.get());
-                            })
+                        function firmarNuevaClase_Transferencia() {
+                            if (confirm('¿Estás seguro de que quieres firmar?')) {
+
+                                require(['N/currentRecord', 'N/record', 'N/runtime', 'N/format', 'N/url'], function (currentRecord, record, runtime, format, url) {
+                                    console.log('Firma Nueva Clase Transferencia');
+                                    console.log(currentRecord.get());
+
+                                    // Obtener data
+                                    ${htmlObtenerData}
+
+                                    // Setear datos al record
+                                    activoFijoRecord.setValue('custrecord_bio_usufirnuecc_trans_con_act', user.id);
+                                    activoFijoRecord.setValue('custrecord_bio_fecfirnuecc_trans_con_act', datetime);
+
+                                    // Actualizar pagina
+                                    ${htmlActualizarPagina}
+                                })
+                            }
                         }
                     </script>
 
                     <button type="button" class="pgBntG pgBntB" style="padding: 3px 12px;" onClick="firmarNuevaClase_Transferencia()">Firmar</button>
-                    `
+                `;
             }
 
             button.defaultValue = html;
