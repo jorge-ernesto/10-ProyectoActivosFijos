@@ -59,7 +59,7 @@ define(['N'],
                 params: {
                     _button: 'consultar',
                     _assettype: assettype,
-                    _subsidiary: subsidiary.join('|'), // ['1','2'] -> 1|2
+                    _subsidiary: subsidiary.join('|'), // ['1','2'] -> '1|2'
                     _classification: classification,
                     _numero_activo_alternativo: numero_activo_alternativo,
                     _nombre: nombre,

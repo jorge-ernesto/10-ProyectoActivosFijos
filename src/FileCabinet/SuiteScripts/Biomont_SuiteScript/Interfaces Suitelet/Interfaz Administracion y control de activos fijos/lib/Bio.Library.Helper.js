@@ -52,7 +52,8 @@ define(['N'],
             let { user } = getUser();
             let { suitelet } = getUrlSuiteletDetail(fixedAsset.getValue('id'));
             email.send({
-                author: user.id,
+                author: 22147, // Usuario 'NOTIFICACIONES NETSUITE'
+                // author: user.id, // Usuario logueado
                 recipients: usersId,
                 subject: `Baja de Activo Fijo`,
                 body: `
@@ -67,7 +68,8 @@ define(['N'],
             let { user } = getUser();
             let { suitelet } = getUrlSuiteletDetail(fixedAsset.getValue('id'));
             email.send({
-                author: user.id,
+                author: 22147, // Usuario 'NOTIFICACIONES NETSUITE'
+                // author: user.id, // Usuario logueado
                 recipients: usersId,
                 subject: 'Transferencia de Activo Fijo',
                 body: `
