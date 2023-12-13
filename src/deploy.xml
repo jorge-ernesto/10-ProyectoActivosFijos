@@ -6,7 +6,9 @@
         <path>~/FileCabinet/*</path>
     </files>
     <objects>
-        <path>~/Objects/*</path>
+        <path>~/Objects/Scripts/*</path>
+        <path>~/Objects/ImportacionesCSV/*</path>
+        <!-- <path>~/Objects/Busquedas/*</path> -->
     </objects>
     <translationimports>
         <path>~/Translations/*</path>

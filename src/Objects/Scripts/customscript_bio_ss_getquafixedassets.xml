@@ -1,0 +1,54 @@
+<scheduledscript scriptid="customscript_bio_ss_getquafixedassets">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>Biomont SS Get Quantity Fixed Assets</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <scriptfile>[/SuiteScripts/Biomont_SuiteScript/Interfaces Suitelet/Interfaz Obtener cantidades de activos fijos/Bio.Scheduled.ObtenerCantidadesActivosFijos.js]</scriptfile>
+  <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_bio_subsidiary">
+      <accesslevel>2</accesslevel>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <fieldtype>TEXT</fieldtype>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <label>Subsidiary</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <setting></setting>
+      <storevalue>T</storevalue>
+    </scriptcustomfield>
+  </scriptcustomfields>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_bio_ss_getquafixedassets">
+      <custscript_bio_subsidiary></custscript_bio_subsidiary>
+      <isdeployed>T</isdeployed>
+      <loglevel>DEBUG</loglevel>
+      <status>NOTSCHEDULED</status>
+      <title>Biomont SS Get Quantity Fixed Assets</title>
+      <recurrence>
+        <single>
+          <repeat></repeat>
+          <startdate>2023-11-01</startdate>
+          <starttime>23:00:00Z</starttime>
+        </single>
+      </recurrence>
+    </scriptdeployment>
+  </scriptdeployments>
+</scheduledscript>
