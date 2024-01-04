@@ -90,7 +90,7 @@ define(['N'],
 
         function habilitarCamposPorEstadoAccion(recordContext) {
 
-            // Ocultar todos los campos
+            // Deshabilitar todos los campos
             deshabilitarTodosCampos(recordContext);
 
             // Obtener combo "Estado Accion"

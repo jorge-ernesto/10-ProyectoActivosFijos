@@ -44,6 +44,7 @@ define(['N'],
                     _id: id
                 }
             })
+
             return { suitelet };
         }
 
@@ -51,6 +52,7 @@ define(['N'],
 
             let { user } = getUser();
             let { suitelet } = getUrlSuiteletDetail(fixedAsset.getValue('id'));
+
             email.send({
                 author: 22147, // Usuario 'NOTIFICACIONES NETSUITE'
                 // author: user.id, // Usuario logueado
@@ -67,6 +69,7 @@ define(['N'],
 
             let { user } = getUser();
             let { suitelet } = getUrlSuiteletDetail(fixedAsset.getValue('id'));
+
             email.send({
                 author: 22147, // Usuario 'NOTIFICACIONES NETSUITE'
                 // author: user.id, // Usuario logueado
@@ -89,6 +92,7 @@ define(['N'],
 
             // Obtener nuevo nombre
             nameFile = nameFile.replace(extension, `_${timeStamp}${extension}`);
+
             return nameFile;
         }
 
