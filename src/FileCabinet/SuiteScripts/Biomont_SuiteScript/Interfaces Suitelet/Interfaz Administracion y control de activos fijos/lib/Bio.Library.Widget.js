@@ -809,7 +809,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             let html = '';
 
             let htmlObtenerData = `
-                // Obtener el id interno del activo fijo
+                // Obtener el id interno del record activo fijo
                 let recordContext = currentRecord.get();
                 let assetId = recordContext.getValue('custpage_field_activo_fijo_id_interno');
 
@@ -825,11 +825,6 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             `;
 
             let htmlActualizarPagina = `
-                let activoFijoId = activoFijoRecord.save();
-
-                // Debug
-                console.log(activoFijoId);
-
                 // Obtener url del Suitelet
                 const scriptId = 'customscript_bio_sl_con_fixed_assets_det';
                 const deployId = 'customdeploy_bio_sl_con_fixed_assets_det';
@@ -865,6 +860,8 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                                     // Setear datos al record
                                     activoFijoRecord.setValue('custrecord_bio_usufir_baja_con_act', user.id);
                                     activoFijoRecord.setValue('custrecord_bio_fecfir_baja_con_act', datetime);
+                                    let activoFijoId = activoFijoRecord.save();
+                                    console.log(activoFijoId);
 
                                     // Actualizar pagina
                                     ${htmlActualizarPagina}
@@ -891,6 +888,8 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                                     // Setear datos al record
                                     activoFijoRecord.setValue('custrecord_bio_usufirantcc_trans_con_act', user.id);
                                     activoFijoRecord.setValue('custrecord_bio_fecfirantcc_trans_con_act', datetime);
+                                    let activoFijoId = activoFijoRecord.save();
+                                    console.log(activoFijoId);
 
                                     // Actualizar pagina
                                     ${htmlActualizarPagina}
@@ -917,6 +916,8 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                                     // Setear datos al record
                                     activoFijoRecord.setValue('custrecord_bio_usufirnuecc_trans_con_act', user.id);
                                     activoFijoRecord.setValue('custrecord_bio_fecfirnuecc_trans_con_act', datetime);
+                                    let activoFijoId = activoFijoRecord.save();
+                                    console.log(activoFijoId);
 
                                     // Actualizar pagina
                                     ${htmlActualizarPagina}

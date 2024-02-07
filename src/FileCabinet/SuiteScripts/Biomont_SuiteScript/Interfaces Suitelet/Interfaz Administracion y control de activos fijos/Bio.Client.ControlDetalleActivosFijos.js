@@ -90,18 +90,8 @@ define(['N'],
 
         function habilitarCamposPorEstadoAccion(recordContext) {
 
-            // Ocultar todos los campos
+            // Deshabilitar todos los campos
             deshabilitarTodosCampos(recordContext);
-
-            // Obtener combo "Estado Accion"
-            let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
-
-            // Obtener field hidden "Estado Accion Id Interno"
-            let fieldHiddenEstadoAccionIdInterno = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
-
-            // Debug
-            console.log('comboEstadoAccion', comboEstadoAccion);
-            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
 
             /**
             * Funcionalidad para habilitar y deshabilitar campos
@@ -110,8 +100,15 @@ define(['N'],
                 - Baja: 2
                 - Transferencia: 3
             */
+            // Obtener combo "Estado Accion" y field hidden "Estado Accion Id Interno"
+            let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
+            let fieldHiddenEstadoAccionIdInterno = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
 
-            // Si se selecciona combo "Alta"
+            // Debug
+            console.log('comboEstadoAccion', comboEstadoAccion);
+            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
+
+            // Si es combo "Alta"
             if (comboEstadoAccion == 1) {
 
                 // No se hizo una "Alta", "Baja" o "Transferencia" anteriormente
@@ -122,18 +119,18 @@ define(['N'],
                 }
             }
 
-            // Si se selecciona combo "Baja"
+            // Si es combo "Baja"
             if (comboEstadoAccion == 2) {
 
                 // No se hizo una "Baja" anteriormente
                 if (!(fieldHiddenEstadoAccionIdInterno == 2)) {
 
-                    // Habilitar campos "Transferencia"
+                    // Habilitar campos "Baja"
                     habilitarCamposBaja(recordContext);
                 }
             }
 
-            // Si se selecciona combo "Transferencia"
+            // Si es combo "Transferencia"
             if (comboEstadoAccion == 3) {
 
                 // No se hizo una "Baja" o "Transferencia"
@@ -224,17 +221,15 @@ define(['N'],
 
         function validarComboEstadoAccion(recordContext) {
 
-            // Obtener combo "Estado Accion"
+            // Obtener combo "Estado Accion" y field hidden "Estado Accion Id Interno"
             let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
-
-            // Obtener field hidden "Estado Accion Id Interno"
             let fieldHiddenEstadoAccionIdInterno = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
 
             // Debug
             console.log('comboEstadoAccion', comboEstadoAccion);
             console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
 
-            // Si se selecciona combo "Alta"
+            // Si es combo "Alta"
             if (comboEstadoAccion == 1) {
 
                 // Se hizo una "Alta", "Baja" o "Transferencia" anteriormente
@@ -245,7 +240,7 @@ define(['N'],
                 }
             }
 
-            // Si se selecciona combo "Baja"
+            // Si es combo "Baja"
             if (comboEstadoAccion == 2) {
 
                 // Se hizo una "Baja" anteriormente
@@ -256,7 +251,7 @@ define(['N'],
                 }
             }
 
-            // Si se selecciona combo "Transferencia"
+            // Si es combo "Transferencia"
             if (comboEstadoAccion == 3) {
 
                 // Se hizo una "Baja" o "Transferencia" anteriormente
