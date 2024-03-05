@@ -1,4 +1,24 @@
 <manifest projecttype="ACCOUNTCUSTOMIZATION">
-  <projectname>9-ProyectoActivosFijos</projectname>
+  <projectname>11-ProyectoActivosFijos</projectname>
   <frameworkversion>1.0</frameworkversion>
+  <dependencies>
+    <features>
+      <feature required="true">SERVERSIDESCRIPTING</feature>
+      <feature required="false">CRM</feature>
+      <feature required="true">CUSTOMRECORDS</feature>
+    </features>
+    <objects>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprlifetime</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprstartdeprdate</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprstatus</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdepraltmethod</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprasset</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprrv_perc</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdepr_originalcost</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdepr_accountingbook</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprmethod</object>
+      <object>customrecord_ncfar_altdepreciation.custrecord_altdeprrv</object>
+      <object>customrecord_ncfar_altdepreciation</object>
+    </objects>
+  </dependencies>
 </manifest>

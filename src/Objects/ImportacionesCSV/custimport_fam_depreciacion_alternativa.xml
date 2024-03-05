@@ -1,0 +1,113 @@
+<savedcsvimport scriptid="custimport_fam_depreciacion_alternativa">
+  <charencoding>windows-1252</charencoding>
+  <columndelimiter>SEMICOLON</columndelimiter>
+  <customrecord>[scriptid=customrecord_ncfar_altdepreciation]</customrecord>
+  <datahandling>ADD</datahandling>
+  <decimaldelimiter>PERIOD</decimaldelimiter>
+  <ignorereadonly>T</ignorereadonly>
+  <importname>FAM: depreciación alternativa</importname>
+  <logsystemnotescustfields>F</logsystemnotescustfields>
+  <multiselectdelimiter>|</multiselectdelimiter>
+  <overwritemissingfields>F</overwritemissingfields>
+  <overwritesublists>F</overwritesublists>
+  <recordtype>CUSTOMRECORD</recordtype>
+  <runserversuitescript>T</runserversuitescript>
+  <usemultithread>F</usemultithread>
+  <validatemandatorycustfields>T</validatemandatorycustfields>
+  <audience>
+    <allemployees>F</allemployees>
+    <allpartners>F</allpartners>
+    <allroles>F</allroles>
+    <globaledit>F</globaledit>
+    <ispublic>F</ispublic>
+    <roles></roles>
+  </audience>
+  <filemappings>
+    <filemapping>
+      <file>CUSTOMRECORD</file>
+    </filemapping>
+  </filemappings>
+  <recordmappings>
+    <recordmapping>
+      <record>CUSTOMRECORD</record>
+      <fieldmappings>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdepr_accountingbook]</field>
+          <value>1</value>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdepr_originalcost]</field>
+          <columnreference>
+            <column>COSTO ORIGINAL</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdepraltmethod]</field>
+          <columnreference>
+            <column>MÉTODO ALTERNATIVO</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprasset]</field>
+          <columnreference>
+            <column>ACTIVO PRINCIPAL</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprlifetime]</field>
+          <columnreference>
+            <column>VIDA DEL ACTIVO (AL)</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprmethod]</field>
+          <columnreference>
+            <column>MÉTODO DE DEPRECIACIÓN</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprrv]</field>
+          <columnreference>
+            <column>VALOR RESIDUAL (RV)</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprrv_perc]</field>
+          <columnreference>
+            <column>PORCENTAJE DE VALOR RESIDUAL</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprstartdeprdate]</field>
+          <columnreference>
+            <column>FECHA DE INICIO DE DEPRECIACIÓN</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+        <fieldmapping>
+          <field>[scriptid=customrecord_ncfar_altdepreciation.custrecord_altdeprstatus]</field>
+          <columnreference>
+            <column>ESTADO DE ACTIVO</column>
+            <file>CUSTOMRECORD</file>
+            <type>NAME</type>
+          </columnreference>
+        </fieldmapping>
+      </fieldmappings>
+    </recordmapping>
+  </recordmappings>
+</savedcsvimport>

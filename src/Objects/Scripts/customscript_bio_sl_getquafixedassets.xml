@@ -1,0 +1,25 @@
+<suitelet scriptid="customscript_bio_sl_getquafixedassets">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>Biomont SL Get Quantity Fixed Assets</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Biomont_SuiteScript/Interfaces Suitelet/Interfaz Obtener cantidades de activos fijos/Bio.Suitelet.ObtenerCantidadesActivosFijos.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_bio_sl_getquafixedassets">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>DEBUG</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>Biomont SL Get Quantity Fixed Assets</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
