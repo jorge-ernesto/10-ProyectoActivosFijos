@@ -12,7 +12,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
         const DATA = {
             'clientScriptModulePath': {
                 'suiteletReport': './../Bio.Client.ControlActivosFijos.js',
-                'suiteletDetail': './../Bio.Client.ControlDetalleActivosFijos.js',
+                'suiteletDetail': './../Bio.Client.ControlActivosFijos.Detalle.js',
             }
         }
 
@@ -156,7 +156,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
 
             // Agregar sublista
             let sublist = form.addSublist({
-                id: 'custpage_sublist_reporte_costo_real_md',
+                id: 'custpage_sublist_reporte_lista_activos',
                 type: sublistType, // serverWidget.SublistType.LIST, serverWidget.SublistType.STATICLIST
                 label: 'Lista de activos',
                 tab: 'custpage_subtab'

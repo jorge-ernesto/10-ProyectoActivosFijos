@@ -37,6 +37,7 @@ define(['N'],
 
         function getUrlSuiteletDetail(id) {
 
+            // Obtener url del Suitelet mediante ID del Script y ID del Despliegue
             let suitelet = url.resolveScript({
                 deploymentId: deployId,
                 scriptId: scriptId,

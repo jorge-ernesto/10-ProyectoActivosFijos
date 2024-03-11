@@ -169,110 +169,6 @@ define(['./Bio.Library.Helper', 'N'],
             return resultTransaction;
         }
 
-        function getDataConf_CentroCostoEmpleado() {
-
-            // Declarar variables
-            let resultTransaction = [];
-
-            // Declarar search
-            let searchObject = {
-                type: 'customrecord_bio_conf_cencos_emp',
-                columns: [
-                    search.createColumn({ name: "internalid", label: "ID INTERNO" }),
-                    search.createColumn({ name: "custrecord_bio_centro_costo_confccemp", label: "Centro Costo" }),
-                    search.createColumn({ name: "custrecord_bio_empleado_confccemp", label: "Empleado" }),
-                    search.createColumn({ name: "custrecord_bio_estado_accion_confccemp", label: "Estado Acción" })
-                ]
-            };
-
-            // Crear search
-            let searchContext = search.create(searchObject);
-
-            // Cantidad de registros en search
-            // let count = searchContext.runPaged().count;
-            // log.debug('', 'getDataConf_CentroCosto_Empleado');
-            // log.debug('', count);
-
-            // Recorrer search
-            searchContext.run().each(node => {
-                // Obtener informacion
-                let columns = node.columns;
-                let id_interno = node.getValue(columns[0]); // ID INTERNO
-                let centro_costo = node.getValue(columns[1]); // CENTRO DE COSTO
-                let centro_costo_nombre = node.getText(columns[1]); // CENTRO DE COSTO
-                let empleado = node.getValue(columns[2]); // EMPLEADO
-                let empleado_nombre = node.getText(columns[2]); // EMPLEADO
-                let estado_accion = node.getValue(columns[3]); // ESTADO ACCION
-                let estado_accion_nombre = node.getText(columns[3]); // ESTADO ACCION
-
-                // Insertar informacion en array
-                resultTransaction.push({
-                    id_interno: id_interno,
-                    centro_costo: { id: centro_costo, nombre: centro_costo_nombre },
-                    empleado: { id: empleado, nombre: empleado_nombre },
-                    estado_accion: { id: estado_accion, nombre: estado_accion_nombre }
-                });
-
-                return true; // La funcion each debes indicarle si quieres que siga iterando o no
-            })
-
-            // objHelper.error_log('getDataConf_CentroCosto_Empleado', resultTransaction);
-            return resultTransaction;
-        }
-
-        function getUsersByTipoAccionCentroCosto(activo_fijo_id_interno) {
-
-            // Declarar variables
-            let usersBaja = {
-                usersId: [], // Anterior Centro de Costo
-                usersId_: [] // Nuevo Centro de Costo
-            }
-            let usersTransferencia = {
-                usersId: [], // Anterior Centro de Costo
-                usersId_: [] // Nuevo Centro de Costo
-            }
-
-            // Obtener datos por search
-            let dataConf_CentroCosto_Empleado = getDataConf_CentroCostoEmpleado();
-
-            // Obtener datos por record
-            let fixedAsset = record.load({ type: 'customrecord_ncfar_asset', id: activo_fijo_id_interno });
-
-            // Recorrer configuracion Centro de Costo - Empleado - Tipo de Accion
-            dataConf_CentroCosto_Empleado.forEach(element => {
-
-                // * BAJA
-                if (element.estado_accion.id == 2) {
-
-                    // Usuarios del Anterior Centro de Costo
-                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
-                        usersBaja.usersId.push(Number(element.empleado.id));
-                    }
-
-                    // Usuarios del Nuevo Centro de Costo
-                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
-                        usersBaja.usersId_.push(Number(element.empleado.id));
-                    }
-                }
-
-                // * TRANSFERENCIA
-                if (element.estado_accion.id == 3) {
-
-                    // Usuarios del Anterior Centro de Costo
-                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
-                        usersTransferencia.usersId.push(Number(element.empleado.id));
-                    }
-
-                    // Usuarios del Nuevo Centro de Costo
-                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
-                        usersTransferencia.usersId_.push(Number(element.empleado.id));
-                    }
-                }
-            });
-
-            return { usersBaja, usersTransferencia }
-        }
-
         // Suitelet Report
         function getAssetTypeList() {
 
@@ -450,6 +346,110 @@ define(['./Bio.Library.Helper', 'N'],
 
             // Retornar array
             return result;
+        }
+
+        function getUsersByTipoAccionCentroCosto(activo_fijo_id_interno) {
+
+            // Declarar variables
+            let usersBaja = {
+                usersId: [], // Anterior Centro de Costo
+                usersId_: [] // Nuevo Centro de Costo
+            }
+            let usersTransferencia = {
+                usersId: [], // Anterior Centro de Costo
+                usersId_: [] // Nuevo Centro de Costo
+            }
+
+            // Obtener datos por search
+            let dataConf_CentroCosto_Empleado = getDataConf_CentroCostoEmpleado();
+
+            // Obtener datos por record
+            let fixedAsset = record.load({ type: 'customrecord_ncfar_asset', id: activo_fijo_id_interno });
+
+            // Recorrer configuracion Centro de Costo - Empleado - Tipo de Accion
+            dataConf_CentroCosto_Empleado.forEach(element => {
+
+                // * BAJA
+                if (element.estado_accion.id == 2) {
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
+                        usersBaja.usersId.push(Number(element.empleado.id));
+                    }
+
+                    // Usuarios del Nuevo Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
+                        usersBaja.usersId_.push(Number(element.empleado.id));
+                    }
+                }
+
+                // * TRANSFERENCIA
+                if (element.estado_accion.id == 3) {
+
+                    // Usuarios del Anterior Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_assetclass')) {
+                        usersTransferencia.usersId.push(Number(element.empleado.id));
+                    }
+
+                    // Usuarios del Nuevo Centro de Costo
+                    if (element.centro_costo.id == fixedAsset.getValue('custrecord_bio_nue_cc_con_act_fij')) {
+                        usersTransferencia.usersId_.push(Number(element.empleado.id));
+                    }
+                }
+            });
+
+            return { usersBaja, usersTransferencia }
+        }
+
+        function getDataConf_CentroCostoEmpleado() {
+
+            // Declarar variables
+            let resultTransaction = [];
+
+            // Declarar search
+            let searchObject = {
+                type: 'customrecord_bio_conf_cencos_emp',
+                columns: [
+                    search.createColumn({ name: "internalid", label: "ID INTERNO" }),
+                    search.createColumn({ name: "custrecord_bio_centro_costo_confccemp", label: "Centro Costo" }),
+                    search.createColumn({ name: "custrecord_bio_empleado_confccemp", label: "Empleado" }),
+                    search.createColumn({ name: "custrecord_bio_estado_accion_confccemp", label: "Estado Acción" })
+                ]
+            };
+
+            // Crear search
+            let searchContext = search.create(searchObject);
+
+            // Cantidad de registros en search
+            // let count = searchContext.runPaged().count;
+            // log.debug('', 'getDataConf_CentroCosto_Empleado');
+            // log.debug('', count);
+
+            // Recorrer search
+            searchContext.run().each(node => {
+                // Obtener informacion
+                let columns = node.columns;
+                let id_interno = node.getValue(columns[0]); // ID INTERNO
+                let centro_costo = node.getValue(columns[1]); // CENTRO DE COSTO
+                let centro_costo_nombre = node.getText(columns[1]); // CENTRO DE COSTO
+                let empleado = node.getValue(columns[2]); // EMPLEADO
+                let empleado_nombre = node.getText(columns[2]); // EMPLEADO
+                let estado_accion = node.getValue(columns[3]); // ESTADO ACCION
+                let estado_accion_nombre = node.getText(columns[3]); // ESTADO ACCION
+
+                // Insertar informacion en array
+                resultTransaction.push({
+                    id_interno: id_interno,
+                    centro_costo: { id: centro_costo, nombre: centro_costo_nombre },
+                    empleado: { id: empleado, nombre: empleado_nombre },
+                    estado_accion: { id: estado_accion, nombre: estado_accion_nombre }
+                });
+
+                return true; // La funcion each debes indicarle si quieres que siga iterando o no
+            })
+
+            // objHelper.error_log('getDataConf_CentroCosto_Empleado', resultTransaction);
+            return resultTransaction;
         }
 
         return { getDataActivosFijos, getUsersByTipoAccionCentroCosto, getAssetTypeList, getClassList, getEstadoAccionList, getEstadoBienList, getMotivoBajaList }
