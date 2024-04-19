@@ -72,10 +72,10 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             });
             fieldSubsidiary.updateBreakType({ breakType: 'STARTCOL' })
 
-            // Clases
+            // Clases - Centros de Costos
             let fieldClass = form.addField({
                 id: 'custpage_field_filter_class',
-                label: 'Clases',
+                label: 'Centros de Costos',
                 type: 'select',
                 // source: 'classification',
                 container: 'custpage_group'
@@ -83,10 +83,10 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             fieldClass.updateBreakType({ breakType: 'STARTCOL' })
             setFieldReport(fieldClass, 'fieldClass');
 
-            // Número de activo alternativo
+            // Número de activo alternativo - Placa
             let fieldNumeroActivoAlternativo = form.addField({
                 id: 'custpage_field_filter_numero_activo_alternativo',
-                label: 'Número de activo alternativo',
+                label: 'Placa',
                 type: 'text',
                 container: 'custpage_group'
             })
@@ -168,14 +168,17 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             sublist.addField({ id: 'custpage_transaccion', type: serverWidget.FieldType.TEXT, label: 'Transacción' });
             sublist.addField({ id: 'custpage_tipo_activo', type: serverWidget.FieldType.TEXT, label: 'Tipo de Activo' });
             sublist.addField({ id: 'custpage_nombre', type: serverWidget.FieldType.TEXT, label: 'Nombre' });
-            sublist.addField({ id: 'custpage_descripcion', type: serverWidget.FieldType.TEXT, label: 'Descripción' });
+            // sublist.addField({ id: 'custpage_descripcion', type: serverWidget.FieldType.TEXT, label: 'Descripción' });
+            sublist.addField({ id: 'custpage_marca', type: serverWidget.FieldType.TEXT, label: 'Marca' });
+            sublist.addField({ id: 'custpage_modelo', type: serverWidget.FieldType.TEXT, label: 'Modelo' });
+            sublist.addField({ id: 'custpage_serie', type: serverWidget.FieldType.TEXT, label: 'Serie' });
             sublist.addField({ id: 'custpage_proveedor', type: serverWidget.FieldType.TEXT, label: 'Proveedor' });
             sublist.addField({ id: 'custpage_fecha_compra', type: serverWidget.FieldType.TEXT, label: 'Fecha Compra' });
             sublist.addField({ id: 'custpage_costo_original', type: serverWidget.FieldType.TEXT, label: 'Costo Original' });
-            sublist.addField({ id: 'custpage_clase', type: serverWidget.FieldType.TEXT, label: 'Centro de Costo' }); // Centro de Costo (Clase)
-            sublist.addField({ id: 'custpage_numero_activo_alternativo', type: serverWidget.FieldType.TEXT, label: 'Número de activo alternativo' });
+            sublist.addField({ id: 'custpage_clase', type: serverWidget.FieldType.TEXT, label: 'Centro de Costo' }); // Clase
+            sublist.addField({ id: 'custpage_numero_activo_alternativo', type: serverWidget.FieldType.TEXT, label: 'Placa' }); // Número de activo alternativo
             sublist.addField({ id: 'custpage_cantidad_factura', type: serverWidget.FieldType.TEXT, label: 'Cantidad Factura' });
-            sublist.addField({ id: 'custpage_usuario_depositario', type: serverWidget.FieldType.TEXT, label: 'Usuario (Depositario)' }); // Usuario (Depositario)
+            sublist.addField({ id: 'custpage_usuario_depositario', type: serverWidget.FieldType.TEXT, label: 'Usuario' }); // Usuario (Depositario)
             sublist.addField({ id: 'custpage_estado_accion', type: serverWidget.FieldType.TEXT, label: 'Estado Acción' });
             sublist.addField({ id: 'custpage_estado_activo', type: serverWidget.FieldType.TEXT, label: 'Estado Activo' });
 
@@ -198,8 +201,17 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 if (element.activo_fijo.nombre) {
                     sublist.setSublistValue({ id: 'custpage_nombre', line: i, value: element.activo_fijo.nombre });
                 }
-                if (element.descripcion_activo) {
-                    sublist.setSublistValue({ id: 'custpage_descripcion', line: i, value: element.descripcion_activo });
+                // if (element.descripcion_activo) {
+                //     sublist.setSublistValue({ id: 'custpage_descripcion', line: i, value: element.descripcion_activo });
+                // }
+                if (element.marca) {
+                    sublist.setSublistValue({ id: 'custpage_marca', line: i, value: element.marca });
+                }
+                if (element.modelo) {
+                    sublist.setSublistValue({ id: 'custpage_modelo', line: i, value: element.modelo });
+                }
+                if (element.serie) {
+                    sublist.setSublistValue({ id: 'custpage_serie', line: i, value: element.serie });
                 }
                 if (element.proveedor) {
                     sublist.setSublistValue({ id: 'custpage_proveedor', line: i, value: element.proveedor });
@@ -487,10 +499,10 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 });
                 fieldSerie.updateBreakType({ breakType: 'STARTROW' })
 
-                // Usuario (Depositario)
+                // Usuario (Depositario) - Usuario
                 var fieldUsuarioDepositario = form.addField({
                     id: 'custpage_field_usuario_depositario',
-                    label: 'Usuario (Depositario) (ACTUALIZA CAMPO EXISTENTE)',
+                    label: 'Usuario (ACTUALIZA CAMPO EXISTENTE)',
                     type: 'select',
                     source: 'employee',
                     container: 'custpage_group_datbie'

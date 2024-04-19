@@ -38,6 +38,9 @@ define(['./Bio.Library.Helper', 'N'],
                     search.createColumn({ name: "custrecord_assetpurchaseorder", label: "Orden de compra" }),
                     search.createColumn({ name: "custrecord_bio_est_proc_con_act_fij", label: "Estado Proceso (Administración y control de activos)" }),
                     search.createColumn({ name: "custrecord_bio_est_acc_con_act_fij", label: "Estado Acción (Administración y control de activos)" }),
+                    search.createColumn({ name: "custrecord_bio_marca_con_act_fij", label: "Marca" }),
+                    search.createColumn({ name: "custrecord_bio_modelo_con_act_fij", label: "Modelo" }),
+                    search.createColumn({ name: "custrecord_assetserialno", label: "Serie" }),
                 ],
                 filters: [
                     ["custrecord_assetstatus", "noneof", "4"] // En el listado, no traer los activos fijos con Estado de Activo "Enajenado"
@@ -143,6 +146,9 @@ define(['./Bio.Library.Helper', 'N'],
                     let estado_proceso = row.getText(columns[15]);
                     let estado_accion_id_interno = row.getValue(columns[16]);
                     let estado_accion = row.getText(columns[16]);
+                    let marca = row.getValue(columns[17]);
+                    let modelo = row.getValue(columns[18]);
+                    let serie = row.getValue(columns[19]);
 
                     // Insertar informacion en array
                     resultTransaction.push({
@@ -161,6 +167,9 @@ define(['./Bio.Library.Helper', 'N'],
                         orden_compra: { id: orden_compra_id_interno, numero_documento: orden_compra },
                         estado_proceso: { id: estado_proceso_id_interno, nombre: estado_proceso },
                         estado_accion: { id: estado_accion_id_interno, nombre: estado_accion },
+                        marca: marca,
+                        modelo: modelo,
+                        serie: serie,
                     });
                 });
             });
