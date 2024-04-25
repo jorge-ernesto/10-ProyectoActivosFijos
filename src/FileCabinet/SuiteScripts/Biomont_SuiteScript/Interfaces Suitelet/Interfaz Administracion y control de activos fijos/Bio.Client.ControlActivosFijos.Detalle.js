@@ -82,7 +82,7 @@ define(['N'],
             // Obtener el currentRecord
             let recordContext = scriptContext.currentRecord;
 
-            // Esto se ejecuta cuando se hacen cambios en el combo estado accion
+            // SE EJECUTA SOLO CUANDO SE HACEN CAMBIOS EN EL COMBO ESTADO ACCION
             if (scriptContext.fieldId == 'custpage_field_estado_accion') {
                 habilitarCamposPorEstadoAccion(recordContext);
             }
@@ -144,9 +144,8 @@ define(['N'],
 
         function deshabilitarTodosCampos(recordContext) {
 
-            // SuiteScript 2.x Modules
-            // N/currentRecord Module
-            // https://6462530.app.netsuite.com/app/help/helpcenter.nl?fid=section_4625600928.html
+            // Obtener campo y deshabilitarlo
+            // https://6462530-sb1.app.netsuite.com/app/help/helpcenter.nl?fid=section_4625600928.html
 
             // Datos del proveedor
             recordContext.getField('custpage_field_numero_guia').isDisabled = true;
