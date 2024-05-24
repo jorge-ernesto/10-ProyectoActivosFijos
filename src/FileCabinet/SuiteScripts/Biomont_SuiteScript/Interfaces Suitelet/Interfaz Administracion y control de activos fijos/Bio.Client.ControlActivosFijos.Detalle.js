@@ -153,7 +153,8 @@ define(['N'],
             // Datos del bien
             recordContext.getField('custpage_field_marca').isDisabled = true;
             recordContext.getField('custpage_field_modelo').isDisabled = true;
-            recordContext.getField('custpage_field_fecha_activacion').isDisabled = true;
+            recordContext.getField('custpage_field_fecha_uso').isDisabled = true;
+            recordContext.getField('custpage_field_fecha_placa').isDisabled = true;
             recordContext.getField('custpage_field_nserie').isDisabled = true;
             recordContext.getField('custpage_field_usuario_depositario').isDisabled = true;
             recordContext.getField('custpage_field_ubicacion').isDisabled = true;
@@ -161,18 +162,18 @@ define(['N'],
             recordContext.getField('custpage_field_detalle_uso').isDisabled = true;
 
             // Baja de activo
-            recordContext.getField('custpage_field_motivo_Baja').isDisabled = true;
-            recordContext.getField('custpage_field_detalle_Baja').isDisabled = true;
-            recordContext.getField('custpage_field_archivo_Baja').isDisabled = true;
-            recordContext.getField('custpage_field_usuariofirma_anteriorclase_Baja').isDisabled = true;
-            recordContext.getField('custpage_field_fechafirma_anteriorclase_Baja').isDisabled = true;
+            recordContext.getField('custpage_field_motivo_baja').isDisabled = true;
+            recordContext.getField('custpage_field_detalle_baja').isDisabled = true;
+            recordContext.getField('custpage_field_archivo_baja').isDisabled = true;
+            recordContext.getField('custpage_field_usuariofirma_anteriorclase_baja').isDisabled = true;
+            recordContext.getField('custpage_field_fechafirma_anteriorclase_baja').isDisabled = true;
 
             // Transferencia de activo
-            recordContext.getField('custpage_field_usuariofirma_anteriorclase_Transferencia').isDisabled = true;
-            recordContext.getField('custpage_field_fechafirma_anteriorclase_Transferencia').isDisabled = true;
-            recordContext.getField('custpage_field_nuevaclase_Transferencia').isDisabled = true;
-            recordContext.getField('custpage_field_usuariofirma_nuevaclase_Transferencia').isDisabled = true;
-            recordContext.getField('custpage_field_fechafirma_nuevaclase_Transferencia').isDisabled = true;
+            recordContext.getField('custpage_field_usuariofirma_anteriorclase_transferencia').isDisabled = true;
+            recordContext.getField('custpage_field_fechafirma_anteriorclase_transferencia').isDisabled = true;
+            recordContext.getField('custpage_field_nuevaclase_transferencia').isDisabled = true;
+            recordContext.getField('custpage_field_usuariofirma_nuevaclase_transferencia').isDisabled = true;
+            recordContext.getField('custpage_field_fechafirma_nuevaclase_transferencia').isDisabled = true;
             recordContext.getField('custpage_field_nueva_ubicacion').isDisabled = true;
             recordContext.getField('custpage_field_nuevo_usuario_depositario').isDisabled = true;
         }
@@ -188,7 +189,8 @@ define(['N'],
             // Datos del bien
             recordContext.getField('custpage_field_marca').isDisabled = false;
             recordContext.getField('custpage_field_modelo').isDisabled = false;
-            if (estado_activo == 6 || estado_activo_nombre == 'Nuevo') recordContext.getField('custpage_field_fecha_activacion').isDisabled = false; // Solo guarda "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
+            recordContext.getField('custpage_field_fecha_uso').isDisabled = false;
+            recordContext.getField('custpage_field_fecha_placa').isDisabled = false;
             recordContext.getField('custpage_field_nserie').isDisabled = false;
             recordContext.getField('custpage_field_usuario_depositario').isDisabled = false;
             recordContext.getField('custpage_field_ubicacion').isDisabled = false;
@@ -199,21 +201,21 @@ define(['N'],
         function habilitarCamposBaja(recordContext) {
 
             // Baja de activo
-            recordContext.getField('custpage_field_motivo_Baja').isDisabled = false;
-            recordContext.getField('custpage_field_detalle_Baja').isDisabled = false;
-            recordContext.getField('custpage_field_archivo_Baja').isDisabled = false;
-            recordContext.getField('custpage_field_usuariofirma_anteriorclase_Baja').isDisabled = false;
-            recordContext.getField('custpage_field_fechafirma_anteriorclase_Baja').isDisabled = false;
+            recordContext.getField('custpage_field_motivo_baja').isDisabled = false;
+            recordContext.getField('custpage_field_detalle_baja').isDisabled = false;
+            recordContext.getField('custpage_field_archivo_baja').isDisabled = false;
+            recordContext.getField('custpage_field_usuariofirma_anteriorclase_baja').isDisabled = false;
+            recordContext.getField('custpage_field_fechafirma_anteriorclase_baja').isDisabled = false;
         }
 
         function habilitarCamposTransferencia(recordContext) {
 
             // Transferencia de activo
-            recordContext.getField('custpage_field_usuariofirma_anteriorclase_Transferencia').isDisabled = false;
-            recordContext.getField('custpage_field_fechafirma_anteriorclase_Transferencia').isDisabled = false;
-            recordContext.getField('custpage_field_nuevaclase_Transferencia').isDisabled = false;
-            recordContext.getField('custpage_field_usuariofirma_nuevaclase_Transferencia').isDisabled = false;
-            recordContext.getField('custpage_field_fechafirma_nuevaclase_Transferencia').isDisabled = false;
+            recordContext.getField('custpage_field_usuariofirma_anteriorclase_transferencia').isDisabled = false;
+            recordContext.getField('custpage_field_fechafirma_anteriorclase_transferencia').isDisabled = false;
+            recordContext.getField('custpage_field_nuevaclase_transferencia').isDisabled = false;
+            recordContext.getField('custpage_field_usuariofirma_nuevaclase_transferencia').isDisabled = false;
+            recordContext.getField('custpage_field_fechafirma_nuevaclase_transferencia').isDisabled = false;
             recordContext.getField('custpage_field_nueva_ubicacion').isDisabled = false;
             recordContext.getField('custpage_field_nuevo_usuario_depositario').isDisabled = false;
         }

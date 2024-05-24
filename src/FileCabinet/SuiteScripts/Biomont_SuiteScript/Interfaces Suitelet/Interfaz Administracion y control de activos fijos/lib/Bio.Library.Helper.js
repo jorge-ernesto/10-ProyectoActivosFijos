@@ -7,7 +7,7 @@ define(['N'],
 
     function (N) {
 
-        const { log, runtime, email, url } = N;
+        const { log, runtime, format, email, url } = N;
 
         const scriptId = 'customscript_bio_sl_con_fixed_assets_det';
         const deployId = 'customdeploy_bio_sl_con_fixed_assets_det';
@@ -17,6 +17,12 @@ define(['N'],
         function getUser() {
             let user = runtime.getCurrentUser();
             return { user };
+        }
+
+        function getDate() {
+            var now = new Date();
+            var date = format.format({ value: now, type: format.Type.DATE });
+            return date;
         }
 
         function error_log(title, data) {
@@ -102,6 +108,6 @@ define(['N'],
             return `${now.toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '_')}`;
         }
 
-        return { getUser, error_log, email_log, getUrlSuiteletDetail, sendEmailBaja, sendEmailTransferencia, getNameFile }
+        return { getUser, getDate, error_log, email_log, getUrlSuiteletDetail, sendEmailBaja, sendEmailTransferencia, getNameFile }
 
     });

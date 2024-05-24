@@ -50,6 +50,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     fieldClaseIdInterno,
                     // Activo fijo
                     fieldEstadoAccion,
+                    fieldFechaFormato,
                     // Datos del proveedor
                     fieldProveedor,
                     fieldOrdenCompra,
@@ -67,7 +68,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     fieldClase,
                     fieldMarca,
                     fieldModelo,
-                    fieldFechaActivacion,
+                    fieldFechaUso,
+                    fieldFechaPlaca,
                     fieldSerie,
                     fieldUsuarioDepositario,
                     fieldUbicacion,
@@ -126,6 +128,10 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
                 // Activo fijo
                 fieldEstadoAccion.defaultValue = dataActivoFijo[0].estado_accion.id; // Editable
+                if (!dataActivoFijo[0].fecha_formato)
+                    fieldFechaFormato.defaultValue = '';
+                else
+                    fieldFechaFormato.defaultValue = dataActivoFijo[0].fecha_formato;
 
                 // Datos del proveedor
                 fieldProveedor.defaultValue = dataActivoFijo[0].proveedor;
@@ -145,7 +151,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 fieldClase.defaultValue = dataActivoFijo[0].centro_costo.nombre;
                 fieldMarca.defaultValue = dataActivoFijo_.getValue('custrecord_bio_marca_con_act_fij'); // Editable
                 fieldModelo.defaultValue = dataActivoFijo_.getValue('custrecord_bio_modelo_con_act_fij'); // Editable
-                fieldFechaActivacion.defaultValue = dataActivoFijo_.getValue('custrecord_assetdeprstartdate'); // Editable // INFORMACION CAMPO EXISTENTE
+                fieldFechaUso.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_uso_con_act_fij'); // Editable
+                fieldFechaPlaca.defaultValue = dataActivoFijo_.getValue('custrecord_bio_fec_pla_con_act_fij'); // Editable
                 fieldSerie.defaultValue = dataActivoFijo_.getValue('custrecord_assetserialno'); // Editable // INFORMACION CAMPO EXISTENTE
                 fieldUsuarioDepositario.defaultValue = dataActivoFijo_.getValue('custrecord_assetcaretaker'); // Editable // INFORMACION CAMPO EXISTENTE
                 fieldUbicacion.defaultValue = dataActivoFijo_.getValue('custrecord_bio_ubicacion_con_act_fij'); // Editable
@@ -212,6 +219,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 // Activo fijo
                 let estado_accion = scriptContext.request.parameters['custpage_field_estado_accion'];
                 let estado_proceso = 2;
+                let fecha_formato = objHelper.getDate();
 
                 // Datos del proveedor
                 let numero_guia = scriptContext.request.parameters['custpage_field_numero_guia'];
@@ -219,7 +227,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 // Datos del bien
                 let marca = scriptContext.request.parameters['custpage_field_marca'];
                 let modelo = scriptContext.request.parameters['custpage_field_modelo'];
-                let fecha_activacion = scriptContext.request.parameters['custpage_field_fecha_activacion']; // ACTUALIZA CAMPO EXISTENTE
+                let fecha_uso = scriptContext.request.parameters['custpage_field_fecha_uso'];
+                let fecha_placa = scriptContext.request.parameters['custpage_field_fecha_placa'];
                 let nserie = scriptContext.request.parameters['custpage_field_nserie']; // ACTUALIZA CAMPO EXISTENTE
                 let usuario_depositario = scriptContext.request.parameters['custpage_field_usuario_depositario']; // ACTUALIZA CAMPO EXISTENTE
                 let ubicacion = scriptContext.request.parameters['custpage_field_ubicacion'];
@@ -249,6 +258,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 // Activo fijo
                 activoFijoRecord.setValue('custrecord_bio_est_acc_con_act_fij', estado_accion);
                 activoFijoRecord.setValue('custrecord_bio_est_proc_con_act_fij', estado_proceso);
+                if (!activoFijoRecord.getValue('custrecord_bio_fec_for_con_act_fij')) activoFijoRecord.setText('custrecord_bio_fec_for_con_act_fij', fecha_formato);
 
                 // * ALTA
                 if (estado_accion == 1) {
@@ -258,7 +268,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     // Datos del bien
                     activoFijoRecord.setValue('custrecord_bio_marca_con_act_fij', marca);
                     activoFijoRecord.setValue('custrecord_bio_modelo_con_act_fij', modelo);
-                    if (activoFijoRecord.getValue('custrecord_assetstatus') == 6 || activoFijoRecord.getText('custrecord_assetstatus') == 'Nuevo') activoFijoRecord.setText('custrecord_assetdeprstartdate', fecha_activacion); // ACTUALIZA CAMPO EXISTENTE // Solo guarda "Fecha de Activación" cuando el "Estado Activo" es "Nuevo"
+                    activoFijoRecord.setText('custrecord_bio_fec_uso_con_act_fij', fecha_uso);
+                    activoFijoRecord.setText('custrecord_bio_fec_pla_con_act_fij', fecha_placa);
                     activoFijoRecord.setValue('custrecord_assetserialno', nserie); // ACTUALIZA CAMPO EXISTENTE
                     activoFijoRecord.setValue('custrecord_assetcaretaker', usuario_depositario); // ACTUALIZA CAMPO EXISTENTE
                     activoFijoRecord.setValue('custrecord_bio_ubicacion_con_act_fij', ubicacion);

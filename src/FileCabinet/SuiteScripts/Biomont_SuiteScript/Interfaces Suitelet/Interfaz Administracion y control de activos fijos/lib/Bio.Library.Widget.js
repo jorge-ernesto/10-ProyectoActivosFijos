@@ -312,6 +312,16 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 });
                 fieldEstadoAccion.updateBreakType({ breakType: 'STARTCOL' })
                 setFieldDetail(fieldEstadoAccion, 'fieldEstadoAccion');
+
+                // Fecha de Formato
+                var fieldFechaFormato = form.addField({
+                    id: 'custpage_field_fecha_formato',
+                    label: 'Fecha de Formato',
+                    type: 'date',
+                    container: 'custpage_group_actfij'
+                });
+                fieldFechaFormato.updateBreakType({ breakType: 'STARTCOL' })
+                fieldFechaFormato.updateDisplayType({ displayType: 'INLINE' });;
             }
 
             /****************** Datos del proveedor ******************/
@@ -481,14 +491,23 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 });
                 fieldModelo.updateBreakType({ breakType: 'STARTROW' })
 
-                // Fecha de activacion
-                var fieldFechaActivacion = form.addField({
-                    id: 'custpage_field_fecha_activacion',
-                    label: 'Fecha de activación (ACTUALIZA CAMPO EXISTENTE)',
+                // Fecha de Uso
+                var fieldFechaUso = form.addField({
+                    id: 'custpage_field_fecha_uso',
+                    label: 'Fecha de Uso',
                     type: 'date',
                     container: 'custpage_group_datbie'
                 });
-                fieldFechaActivacion.updateBreakType({ breakType: 'STARTCOL' })
+                fieldFechaUso.updateBreakType({ breakType: 'STARTCOL' })
+
+                // Fecha de Placa
+                var fieldFechaPlaca = form.addField({
+                    id: 'custpage_field_fecha_placa',
+                    label: 'Fecha de Placa',
+                    type: 'date',
+                    container: 'custpage_group_datbie'
+                });
+                fieldFechaPlaca.updateBreakType({ breakType: 'STARTROW' })
 
                 // N. Serie
                 var fieldSerie = form.addField({
@@ -751,6 +770,7 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 fieldClaseIdInterno,
                 // Activo fijo
                 fieldEstadoAccion,
+                fieldFechaFormato,
                 // Datos del proveedor
                 fieldProveedor,
                 fieldOrdenCompra,
@@ -768,7 +788,8 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
                 fieldClase,
                 fieldMarca,
                 fieldModelo,
-                fieldFechaActivacion,
+                fieldFechaUso,
+                fieldFechaPlaca,
                 fieldSerie,
                 fieldUsuarioDepositario,
                 fieldUbicacion,
