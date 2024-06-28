@@ -222,21 +222,28 @@ define(['N'],
 
         function validarComboEstadoAccion(recordContext) {
 
-            // Obtener combo "Estado Accion" y field hidden "Estado Accion Id Interno"
+            // Obtener combo "Estado Accion" y field hidden "Estado Accion"
             let comboEstadoAccion = recordContext.getValue('custpage_field_estado_accion');
-            let fieldHiddenEstadoAccionIdInterno = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
+            let fieldHiddenEstadoAccion = recordContext.getValue('custpage_field_estado_accion_id_interno') || 0;
+
+            // Obtener label hidden "Estado Accion"
+            let labelHiddenEstadoAccion = {
+                '1': 'Alta',
+                '2': 'Baja',
+                '3': 'Transferencia'
+            }
 
             // Debug
             console.log('comboEstadoAccion', comboEstadoAccion);
-            console.log('fieldHiddenEstadoAccionIdInterno', fieldHiddenEstadoAccionIdInterno);
+            console.log('fieldHiddenEstadoAccion', fieldHiddenEstadoAccion);
 
             // Si es combo "Alta"
             if (comboEstadoAccion == 1) {
 
                 // Se hizo una "Alta", "Baja" o "Transferencia" anteriormente
-                if (fieldHiddenEstadoAccionIdInterno == 1 || fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3) {
+                if (fieldHiddenEstadoAccion == 1 || fieldHiddenEstadoAccion == 2 || fieldHiddenEstadoAccion == 3) {
 
-                    detenerGuardar('No se puede guardar el Alta. Se hizo una "Alta", "Baja" o "Transferencia" anteriormente');
+                    detenerGuardar(`No se puede guardar. Se realizó la acción de ${labelHiddenEstadoAccion[fieldHiddenEstadoAccion]} anteriormente`);
                     return true;
                 }
             }
@@ -245,9 +252,9 @@ define(['N'],
             if (comboEstadoAccion == 2) {
 
                 // Se hizo una "Baja" anteriormente
-                if (fieldHiddenEstadoAccionIdInterno == 2) {
+                if (fieldHiddenEstadoAccion == 2) {
 
-                    detenerGuardar('No se puede guardar la Baja. Se hizo una "Baja" anteriormente');
+                    detenerGuardar(`No se puede guardar. Se realizó la acción de ${labelHiddenEstadoAccion[fieldHiddenEstadoAccion]} anteriormente`);
                     return true;
                 }
             }
@@ -256,9 +263,9 @@ define(['N'],
             if (comboEstadoAccion == 3) {
 
                 // Se hizo una "Baja" o "Transferencia" anteriormente
-                if (fieldHiddenEstadoAccionIdInterno == 2 || fieldHiddenEstadoAccionIdInterno == 3) {
+                if (fieldHiddenEstadoAccion == 2 || fieldHiddenEstadoAccion == 3) {
 
-                    detenerGuardar('No se puede guardar la Transferencia. Se hizo una "Baja" o "Transferencia" anteriormente');
+                    detenerGuardar(`No se puede guardar. Se realizó la acción de ${labelHiddenEstadoAccion[fieldHiddenEstadoAccion]} anteriormente`);
                     return true;
                 }
             }
