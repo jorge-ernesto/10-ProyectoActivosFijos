@@ -384,8 +384,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     scriptId: runtime.getCurrentScript().id,
                     deploymentId: runtime.getCurrentScript().deploymentId,
                     parameters: {
-                        '_id': activo_fijo_id_interno,
-                        '_status': _status
+                        _id: activo_fijo_id_interno,
+                        _status: _status
                     }
                 });
             }

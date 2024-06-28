@@ -28,14 +28,14 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             form.clientScriptModulePath = DATA.clientScriptModulePath.suiteletReport;
 
             // Mostrar botones
-            // form.addSubmitButton({
-            //     label: 'Consultar'
-            // });
-            form.addButton({
-                id: 'custpage_button_obtener_activos_fijos',
-                label: 'Obtener activos',
-                functionName: 'getFixedAssets()'
+            form.addSubmitButton({
+                label: 'Consultar'
             });
+            // form.addButton({
+            //     id: 'custpage_button_obtener_activos_fijos',
+            //     label: 'Obtener activos',
+            //     functionName: 'getFixedAssets()'
+            // });
 
             // Mostrar SubPestañas
             form.addSubtab({
