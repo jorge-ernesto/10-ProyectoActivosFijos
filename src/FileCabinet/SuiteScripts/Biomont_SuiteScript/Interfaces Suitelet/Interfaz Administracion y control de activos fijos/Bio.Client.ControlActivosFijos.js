@@ -49,7 +49,7 @@ define(['N'],
             let estado_accion = recordContext.getValue('custpage_field_filter_estado_accion');
 
             // Debug
-            // console.log('debug', { assettype, subsidiary });
+            // console.log('debug', { assettype, subsidiary, classification, numero_activo_alternativo, nombre, estado_accion });
             // return;
 
             // Obtener url del Suitelet mediante ID del Script y ID del Despliegue

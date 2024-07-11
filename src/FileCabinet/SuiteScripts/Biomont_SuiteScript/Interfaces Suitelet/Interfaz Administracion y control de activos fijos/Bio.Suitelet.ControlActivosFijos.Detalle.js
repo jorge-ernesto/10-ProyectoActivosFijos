@@ -212,6 +212,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 /***************** Renderizar formulario *****************/
                 scriptContext.response.writePage(form);
             } else { // POST
+
                 /****************** Recibir parametros por POST ******************/
                 // IDs Internos
                 let activo_fijo_id_interno = scriptContext.request.parameters['custpage_field_activo_fijo_id_interno'];
@@ -384,8 +385,8 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     scriptId: runtime.getCurrentScript().id,
                     deploymentId: runtime.getCurrentScript().deploymentId,
                     parameters: {
-                        '_id': activo_fijo_id_interno,
-                        '_status': _status
+                        _id: activo_fijo_id_interno,
+                        _status: _status
                     }
                 });
             }

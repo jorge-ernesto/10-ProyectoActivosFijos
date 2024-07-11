@@ -10,7 +10,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
     function (objSearch, objWidget, objHelper, N) {
 
-        const { log } = N;
+        const { log, redirect, runtime } = N;
 
         /******************/
 
@@ -63,6 +63,33 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
 
                 // Renderizar formulario
                 scriptContext.response.writePage(form);
+            } else { // POST
+
+                // Recuperar valores de los campos
+                let assettype = scriptContext.request.parameters['custpage_field_filter_assettype'];
+                let subsidiary = scriptContext.request.parameters['custpage_field_filter_subsidiary'];
+                let classification = scriptContext.request.parameters['custpage_field_filter_class'];
+                let numero_activo_alternativo = scriptContext.request.parameters['custpage_field_filter_numero_activo_alternativo'];
+                let nombre = scriptContext.request.parameters['custpage_field_filter_nombre'];
+                let estado_accion = scriptContext.request.parameters['custpage_field_filter_estado_accion'];
+
+                // Debug
+                // objHelper.error_log('debug', { assettype, subsidiary, classification, numero_activo_alternativo, nombre, estado_accion });
+
+                // Redirigir a este mismo Suitelet (Redirigir a si mismo)
+                redirect.toSuitelet({
+                    scriptId: runtime.getCurrentScript().id,
+                    deploymentId: runtime.getCurrentScript().deploymentId,
+                    parameters: {
+                        _button: 'consultar',
+                        _assettype: assettype,
+                        _subsidiary: subsidiary.split('\u0005').join('|'), // '1\u00052' -> '1|2'
+                        _classification: classification,
+                        _numero_activo_alternativo: numero_activo_alternativo,
+                        _nombre: nombre,
+                        _estado_accion: estado_accion
+                    }
+                });
             }
         }
 
