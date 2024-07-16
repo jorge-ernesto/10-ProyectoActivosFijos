@@ -29,7 +29,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 // Obtener datos por url
                 let id = scriptContext.request.parameters['_id'];
                 let status = scriptContext.request.parameters['_status'];
-                status = status?.split('|'); // 'SAVE|SEND_EMAIL_BAJA|SEND_EMAIL_TRANSFERENCIA' -> ['SAVE','SEND_EMAIL_BAJA','SEND_EMAIL_TRANSFERENCIA']
+                status = status?.split('|'); // 'PROCESS_SAVE|PROCESS_SEND_EMAIL_BAJA|PROCESS_SEND_EMAIL_TRANSFERENCIA' -> ['PROCESS_SAVE','PROCESS_SEND_EMAIL_BAJA','PROCESS_SEND_EMAIL_TRANSFERENCIA']
 
                 // Obtener datos por search
                 let dataActivoFijo = objSearch.getDataActivosFijos([''], [''], '', '', '', '', id);
@@ -96,23 +96,20 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                     fieldNuevoUsuarioDepositario
                 } = objWidget.createFormDetail(dataActivoFijo);
 
-                if (status?.includes('SAVE')) {
+                // Si hubo una redireccion a este mismo suitelet
+                if (status?.includes('PROCESS_SAVE')) {
                     form.addPageInitMessage({
                         type: message.Type.CONFIRMATION,
                         message: `Se guardo el registro correctamente`,
                         duration: 25000 // 25 segundos
                     });
-                }
-
-                if (status?.includes('SEND_EMAIL_BAJA') || status?.includes('SEND_EMAIL_TRANSFERENCIA')) {
+                } else if (status?.includes('PROCESS_SEND_EMAIL_BAJA') || status?.includes('PROCESS_SEND_EMAIL_TRANSFERENCIA')) {
                     form.addPageInitMessage({
                         type: message.Type.INFORMATION,
                         message: `Se notifico a los jefes de area por email`,
                         duration: 25000 // 25 segundos
                     });
-                }
-
-                if (status?.includes('PROCESS_SIGNATURE')) {
+                } else if (status?.includes('PROCESS_SIGNATURE')) {
                     form.addPageInitMessage({
                         type: message.Type.INFORMATION,
                         message: `Se firmo correctamente`,
@@ -303,7 +300,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                 let _status = '';
 
                 if (activoFijoId) {
-                    _status = 'SAVE';
+                    _status = 'PROCESS_SAVE';
                 }
 
                 /****************** Subir archivo ******************/
@@ -341,7 +338,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                                     }
                                 });
 
-                                _status += '|SAVE_FILE';
+                                _status += '|PROCESS_SAVE_FILE';
                             }
                         }
                     }
@@ -363,7 +360,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                         // Se encontraron usuarios del Anterior Centro de Costo
                         if (Object.keys(usersBaja.usersId).length > 0) {
                             objHelper.sendEmailBaja(usersBaja.usersId, activoFijoRecord);
-                            _status += '|SEND_EMAIL_BAJA'
+                            _status += '|PROCESS_SEND_EMAIL_BAJA'
                         }
                     }
 
@@ -375,7 +372,7 @@ define(['./lib/Bio.Library.Search', './lib/Bio.Library.Widget', './lib/Bio.Libra
                         // Se encontraron usuarios del Anterior Centro de Costo o Nuevo Centro de Costo
                         if (Object.keys(usersTransferencia.usersId).length > 0) {
                             objHelper.sendEmailTransferencia(usersTransferencia.usersId, activoFijoRecord);
-                            _status += '|SEND_EMAIL_TRANSFERENCIA'
+                            _status += '|PROCESS_SEND_EMAIL_TRANSFERENCIA'
                         }
                     }
                 }

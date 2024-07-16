@@ -80,22 +80,17 @@ define(['N'],
                 // Crear formulario
                 let { form } = createForm();
 
-                // Declarar parametros
-                let status = null;
-
                 // Obtener datos por url
-                if (scriptContext.request.parameters) {
-                    status = scriptContext.request.parameters['status'];
-                }
+                let status = scriptContext.request.parameters['status'];
 
-                // Si hubo una redireccion a este mismo suitelet, despues de enviar a script programado
-                if (status === 'COMPLETE') {
+                // Si hubo una redireccion a este mismo suitelet - despues de enviar a script programado
+                if (status?.includes('COMPLETE')) {
                     form.addPageInitMessage({
                         type: message.Type.INFORMATION,
                         message: `El proceso finalizo correctamente`,
                         duration: 25000
                     });
-                } else if (status === 'FAILED') {
+                } else if (status?.includes('FAILED')) {
                     form.addPageInitMessage({
                         type: message.Type.ERROR,
                         message: `Hubo un error en el proceso`,
