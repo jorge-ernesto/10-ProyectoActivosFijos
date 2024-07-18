@@ -72,10 +72,10 @@ define(['./Bio.Library.Search', './Bio.Library.Helper', 'N'],
             });
             fieldSubsidiary.updateBreakType({ breakType: 'STARTCOL' })
 
-            // Clases - Centros de Costos
+            // Clases - Centros de Costo
             let fieldClass = form.addField({
                 id: 'custpage_field_filter_class',
-                label: 'Centros de Costos',
+                label: 'Centros de Costo',
                 type: 'select',
                 // source: 'classification',
                 container: 'custpage_group'
